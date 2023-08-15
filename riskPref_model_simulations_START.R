@@ -19,13 +19,13 @@ library(ggplot2);
 # - UPPER CONFIDENCE BOUND        (Q0, conf, alpha, beta)
 # - PEIRS                         (Q0, S0, alphaQ, alphaS, beta, omega)
 
-dist   <- c('bimodal');
+dist   <- c('gauss');
 nIters <- 1000; # simulate 1000 blocks
 Qt     <- c(50, 50, 50, 50); #consistent across all four models 
 
 # Set some parameters for model simulations 
-alpha <- 0.15
-beta  <- 0.3;
+alpha <- 0.25
+beta  <- 0.06;
 
 # plot binned over trials 
 bin <- c(1, 25, 49, 73, 97);
