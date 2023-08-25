@@ -15,12 +15,13 @@ if distType == 1
 
     end
 
-    R = {R1, R2, R3, R4};
+    R = {[R1 NaN], [R2 NaN], [R3 NaN], [R4 NaN]};
 
 else
 
     R = bimodal_distr;
     R = {R(:, 1), R(:, 2), R(:, 3), R(:, 4)};
+    
 
 
 end

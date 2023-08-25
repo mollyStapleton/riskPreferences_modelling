@@ -1,4 +1,4 @@
-function [choiceType, totalStim] = sim_RATES_riskPref(params, dist, nIters)
+function [Qall, choiceType, totalStim] = sim_RATES_riskPref(params, dist, nIters)
 
     choiceType   = NaN(nIters, 120);
     totalStim_L  = NaN(nIters, 120);
@@ -23,7 +23,8 @@ function [choiceType, totalStim] = sim_RATES_riskPref(params, dist, nIters)
     
         stimCount  = [0 0 0 0];
         p          = NaN(1, 120);
-    
+        Qtrack     = NaN(120, 4);
+
         for t = 1: 120
             stimL = stim1(t);
             stimR = stim2(t);
@@ -69,9 +70,13 @@ function [choiceType, totalStim] = sim_RATES_riskPref(params, dist, nIters)
             end
 
             Qt(stimIdx) =  Qt(stimIdx) + (alpha2use*delta);
-
+            Qtrack(t, stimIdx) = Qt(stimIdx);
     
         end
+
+          for istim = 1:4
+            Qall{istim}(i, :) =  Qtrack(:, istim);
+          end
     end
 
     %total times RISKY stimuli shown in matched-mean conditions 

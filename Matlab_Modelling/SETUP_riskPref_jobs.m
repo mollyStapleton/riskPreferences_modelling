@@ -18,7 +18,7 @@ cd([base_path repo_path]);
 % SELECT MODEL TO WORK WITH
 %--------------------------------------------------------------
 models                  = {'RW', 'RATES', 'UCB', 'PEIRS'};
-models2run              = [1 2];
+models2run              = [2];
 nIters                  = 1000;
 
 %------------------------------------------------------------
@@ -49,9 +49,9 @@ if simulate_data
             params.alpha_pos = 0.25;
             params.alpha_neg = 0.15;
         elseif strcmpi(models{models2run(imodel)}, 'UCB')
-            params.alpha = [];
-            params.c     = [];
-            params.S     = [];
+%             params.alpha = 0.25;
+            params.c     = 1;
+            params.S     = 0.2;
         elseif strcmpi(models{models2run(imodel)}, 'PEIRS')    
             params.S0 = [];
             params.alphaQ = [];
@@ -65,6 +65,8 @@ if simulate_data
         end
     end
 
+    gcf;
+    set(gcf, 'Position', [369.8000 247.4000 1.1616e+03 514.6000]);
     cd([base_path save_path '\simulations'])
     figSavename = [models{models2run(imodel)}];
     print(figSavename, '-dpdf');
