@@ -18,39 +18,14 @@ cd([base_path repo_path]);
 % SELECT MODEL TO WORK WITH
 %--------------------------------------------------------------
 models                  = {'RW', 'RATES', 'UCB', 'PEIRS'};
-models2run              = [1];
+models2run              = [1 2];
 nIters                  = 1000;
-%-------------------------------------------------------------
-% SET PARAMETERS, ** this is mainly to be used for simulation purposes, for
-% model fitting a series of parameters to be fit are generated within each
-% script
-%----------------------------------------------------------------
-params.Q0    = 50; % FIXED PARAMETER, DO NOT CHANGE 
-params.beta  = 0.03; %softmax temperature parameter included in all models
-
-for iparam = 1: length(models2run)
-    if strcmpi(models{models2run} , 'RW')
-        params.alpha = 0.15;
-    elseif strcmpi(models{models2run} , 'RATES')
-        params.alpha_pos = [];
-        params.alpha_neg = [];
-    elseif strcmpi(models{models2run} , 'UCB')
-        params.alpha = [];
-        params.c     = [];
-        params.S     = [];
-    elseif strcmpi(models{models2run} , 'PEIRS')    
-        params.S0 = [];
-        params.alphaQ = [];
-        params.alphaS = [];
-        params.omega  = [];
-    end
-end
 
 %------------------------------------------------------------
 % SET REWARD DISTRIBUTION 
 %-----------------------------------------------------------------
 dists       = {'Gaussian', 'Bimodal'};
-dists2run   = [1];
+dists2run   = [1 2];
 %-------------------------------------------------------------
 % SELECT JOB TO RUN 
 %-------------------------------------------------------------------
@@ -61,9 +36,38 @@ model_fit_to_data       = 0;  % Fit model to existing data
 if simulate_data
 
     for imodel = 1: length(models2run)
+        %-------------------------------------------------------------
+        % SET PARAMETERS, ** this is mainly to be used for simulation purposes, for
+        % model fitting a series of parameters to be fit are generated within each
+        % script
+        %----------------------------------------------------------------
+        params.Q0    = 50; % FIXED PARAMETER, DO NOT CHANGE 
+        params.beta  = 0.6; %softmax temperature parameter included in all models
+        if strcmpi(models{models2run(imodel)} , 'RW')
+            params.alpha = 0.25;
+        elseif strcmpi(models{models2run(imodel)} , 'RATES')
+            params.alpha_pos = 0.25;
+            params.alpha_neg = 0.15;
+        elseif strcmpi(models{models2run(imodel)}, 'UCB')
+            params.alpha = [];
+            params.c     = [];
+            params.S     = [];
+        elseif strcmpi(models{models2run(imodel)}, 'PEIRS')    
+            params.S0 = [];
+            params.alphaQ = [];
+            params.alphaS = [];
+            params.omega  = [];
+        end
+
+        clf;
         for idist = 1: length(dists2run)
-            sim_riskPref(models{models2run}, params, dists{dists2run}, nIters);
+            sim_riskPref(models{models2run(imodel)}, params, dists{idist}, nIters);
         end
     end
+
+    cd([base_path save_path '\simulations'])
+    figSavename = [models{models2run(imodel)}];
+    print(figSavename, '-dpdf');
+    print(figSavename, '-dpng');
 
 end
