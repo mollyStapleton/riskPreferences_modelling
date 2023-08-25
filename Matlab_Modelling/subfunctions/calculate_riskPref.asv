@@ -1,0 +1,23 @@
+function [data_all, data_binned] = calculate_riskPref(choiceType, totalStim)
+
+    for itrial = 1:120
+        risky_choice{1}(itrial) = sum(choiceType(:, itrial) == -1)./totalStim{1}(itrial);
+        risky_choice{2}(itrial) = sum(choiceType(:, itrial) == 1)./totalStim{2}(itrial);
+    end
+
+    bin = [1:24:120];
+    binSize = 24;
+    for ibin = 1: length(bin)
+
+        meanRisk{1}(ibin) = nanmean(p_risky_out((bin(ibin): (bin(ibin) + binSize -1)), 2));
+        sem_low{idist}(ibin) = nanstd(p_risky_out((bin(ibin): (bin(ibin) + binSize -1)), 2))...
+            ./sqrt(length(p_risky_out((bin(ibin): (bin(ibin) + binSize -1)), 2)));
+
+        mean_high{idist}(ibin) = nanmean(p_risky_out((bin(ibin): (bin(ibin) + binSize -1)), 4));
+        sem_high{idist}(ibin) = nanstd(p_risky_out((bin(ibin): (bin(ibin) + binSize -1)), 4))...
+            ./sqrt(length(p_risky_out((bin(ibin): (bin(ibin) + binSize -1)), 4)));
+    end
+
+
+
+end

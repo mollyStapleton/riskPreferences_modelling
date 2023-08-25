@@ -1,0 +1,44 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%% MLE MODELLING ----------------------
+%%%%% RISK PREFERENCES ----------------------
+%%%%% Author: M. Stapleton, August 2023
+%%%%% ------------------------------------------------
+
+%-------------------------------------------------------
+% PATH SETTING
+%-------------------------------------------------------
+base_path = ['C:\Users\jf22662\OneDrive - University of Bristol\Documents\GitHub\'];
+repo_path = ['riskPreferences_modelling\Matlab_Modelling\']
+data_path = ['data'];
+save_path = ['modelling_figures'];
+
+cd([base_path repo_path]);
+
+%------------------------------------------------------
+% SELECT MODEL TO WORK WITH
+%--------------------------------------------------------------
+models                  = {'RW', 'RATES', 'UCB', 'PEIRS'};
+models2run              = [1];
+
+%-------------------------------------------------------------
+% SET PARAMETERS, ** this is mainly to be used for simulation purposes, for
+% model fitting a series of parameters to be fit are generated within each
+% script
+%----------------------------------------------------------------
+Q0    = 50; % FIXED PARAMETER, DO NOT CHA
+
+alpha = 0.15;
+beta  = 0.03;
+
+%-------------------------------------------------------------
+% SELECT JOB TO RUN 
+%-------------------------------------------------------------------
+simulate_data           = 1;  % Simulate model fits 
+simulate_model_effects  = 0;  % Simulate parameter effects on risk preferences
+model_fit_to_data       = 0;  % Fit model to existing data
+
+if simulate_data
+
+    sim_riskPref(models{models2run})
+
+end
