@@ -1,0 +1,26 @@
+{
+    "id": "775E8F86",
+    "path": "~/GitHub/riskPreferences_modelling/riskPref_model_simulations_START.R",
+    "project_path": "riskPref_model_simulations_START.R",
+    "type": "r_source",
+    "hash": "0",
+    "contents": "",
+    "dirty": false,
+    "created": 1692363427329.0,
+    "source_on_save": false,
+    "relative_order": 3,
+    "properties": {
+        "source_window_id": "",
+        "Source": "Source",
+        "cursorPosition": "53,34",
+        "scrollLine": "52"
+    },
+    "folds": "",
+    "lastKnownWriteTime": 1692116482,
+    "encoding": "UTF-8",
+    "collab_server": "",
+    "source_window": "",
+    "last_content_update": 1692116482,
+    "read_only": false,
+    "read_only_alternatives": []
+}

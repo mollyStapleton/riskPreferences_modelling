@@ -1,0 +1,31 @@
+# Running of repeated measure models on the pupil diameter as a function of distribution type and risky choice
+
+rm(list = ls())
+
+setwd("~/GitHub/data/population_dataAnalysis/stimulus_phasicPupilBins");
+dataLow <- read.csv("dataLow_averagePupil_riskyChoice.csv", header = FALSE, sep = ',');
+colnames(dataLow) <- c("subIdx", "cndIdx", "distIdx", 'risky_safe', "pupil");
+
+mdlLow <- aov(pupil~distIdx*risky_safe+Error(subIdx), data = dataLow);
+sumLow <- summary(mdlLow);
+
+dataHigh <- read.csv("dataHigh_averagePupil_riskyChoice.csv", header = FALSE, sep = ',');
+colnames(dataHigh) <- c("subIdx", "cndIdx", "distIdx", 'risky_safe', "pupil");
+
+mdlHigh <- aov(pupil~distIdx*risky_safe+Error(subIdx), data = dataHigh);
+sumHigh <- summary(mdlHigh);
+
+
+glmeData <- read.csv("stim_pupilSize_prevChoice.csv", header = TRUE, sep = ',');
+colnames(glmeData) <- c("subIdx", "trialNum", "blockNum", "distIdx", "cndIdx",
+                        "reward", "RT", "riskyChoice", "reward_t1", "risky_t1",
+                        "cnd_t1", "pupil");
+
+lowIdx <- which(glmeData["cndIdx"] == 2);
+cols <- ncol(glmeData);
+lowGlme <-glmeData[lowIdx, 1:cols];
+highIdx <- which(glmeData["cndIdx"] == 3);
+highGlme <-glmeData[highIdx, 1:cols];
+
+diam_low <- aov(pupil~distIdx*riskyChoice*risky_t1+Error(subIdx), data = lowGlme);
+

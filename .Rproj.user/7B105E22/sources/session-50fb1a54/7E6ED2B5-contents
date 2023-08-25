@@ -1,0 +1,85 @@
+setwd("~/GitHub/data/population_dataAnalysis");
+rm();
+dataIn <- read.csv("fullData_riskAversion.csv", header = FALSE, sep = ',');
+colnames(dataIn) <- c('subIdx','trialNum','blockNum','distType',
+                       'cndIdx','stimChosen','reward','RT','riskyChoice',
+                       'accChoice','baseline_raw','stim_aligned_pupil','stim_aligned_timeVec',
+                       'stim_preResp_pupil','stim_prtileResp_pupil','stim_derivative',
+                       'choice_aligned_pupil','choice_aligned_timeVec','choice_preResp_pupil',
+                       'choice_prtileResp_pupil','choice_derivative','feedback_aligned_pupil',
+                       'feedback_aligned_timeVec','feedback_preResp_pupil','feedback_prtileResp_pupil',
+                       'feedback_derivative','full_trial_pupil','full_trial_deriv')
+
+lightpurple <- rgb(0.83, 0.71, 0.98);
+darkpurple <- rgb(0.62, 0.35, 0.99);
+lightgreen <- rgb(0.58, 0.99, 0.56); 
+darkgreen  <- rgb(0.19, 0.62, 0.14); 
+
+subIdx <-unique(dataIn["subIdx"]);
+cndIdx <-sort(unique(dataIn[, "cndIdx"])[2:3]);
+distIdx<-unique(dataIn["distType"]);
+isubject <-0
+icnd     <-0
+idist    <-0
+
+
+    # print(subIdx[i, 1]);
+    # tmpIndex <- 0;
+    # tmpIndex <- which(dataIn["subIdx"] == subIdx[i, 1], arr.ind = "TRUE");
+par(mfrow=c(2, 2));    
+splot_titles <- matrix(
+  c("Gaussian:LL", "Gaussian:HH", "Bimodal:LL", "Bimodal:HH"),  # Character values
+  nrow = 2,               # Number of rows
+  ncol = 2,               # Number of columns
+  byrow = TRUE            # Fill matrix by rows
+)
+
+col2plot <- matrix(
+  c(lightpurple, darkpurple, lightgreen, darkgreen),
+  nrow = 2,               # Number of rows
+  ncol = 2,               # Number of columns
+  byrow = TRUE            # Fill matrix by rows
+)
+for (icnd in 1:length(cndIdx)[1]-1){
+  
+    icnd <- icnd +1
+    
+      for (idist in 1:dim(distIdx)[1]-1){
+          
+        idist <- idist +1
+        
+        
+          for (isubject in 1:dim(subIdx)[1]-1){
+            
+            isubject <- isubject +1
+            
+            tmpIndex <- 0;
+            tmpIndex <- which(dataIn["subIdx"] == subIdx[isubject, 1]
+                              & dataIn["cndIdx"] == cndIdx[icnd]
+                                & dataIn["distType"] == distIdx[idist, 1], arr.ind = "TRUE");
+            
+            xData <- dataIn[tmpIndex, "riskyChoice"];
+            yData <- dataIn[tmpIndex, "stim_prtileResp_pupil"];
+            fit <- glm(xData~yData,family=binomial(link = 'probit'));
+            summary(fit);
+            # xfit_tmp <- range(dataIn[tmpIndex, "stim_prtileResp_pupil"]);
+            # xFit <- ceiling(xfit_tmp);
+            xweight <-seq(-2,2, 0.01);
+            yweight <- predict(fit, list(yData = xweight),type="response");
+            # plot(yData, xData, pch = 16, xlab = "PhasicPupil", ylab = "RiskyChoice");
+            
+            if (isubject == 1){
+            plot(xweight, yweight, type='l',axes=TRUE,xlim = c(-2, 2), ylim = c(0, 1), 
+                 xlab = "PhasicPupil", ylab = "RiskyChoice", 
+                 col = col2plot[icnd, idist], main = paste(splot_titles[icnd, idist]));
+            }
+            if(isubject >= 2){
+              lines(xweight, yweight, col = col2plot[icnd, idist])
+            }
+          
+            # lines(xweight, yweight);
+        }
+    }
+}
+
+

@@ -1,0 +1,31 @@
+reward_sum <- function(dist){
+  
+  if (dist == 'gauss'){
+    R1<-0; R2<-0; R3<-0; R4<-0;
+    
+    R1 = round(rnorm(60, 40, 5));
+    R2 = round(rnorm(60, 40, 15));
+    R3 = round(rnorm(60, 60, 5));
+    R4 = round(rnorm(60, 60, 15));
+    R<- matrix(
+      c(R1, R2, R3, R4),
+      nrow = 60,
+      ncol = 4,
+      byrow = FALSE
+    )
+  }
+  if (dist == 'bimodal'){
+    rewardDist  = matrix(0, 60, 4);
+    R           = matrix(0, 60, 4);
+    reward_size = c(50, 200, 75, 300);
+    reward_trials = c(48, 12, 48, 12);
+    for (irew in 1: 4){
+      rewardDist[1:reward_trials[irew], irew] = reward_size[irew];
+      randIdx = floor(runif(60, min = 1, max = 60));
+      for (irow in 1: 60){
+        R[irow, irew] = rewardDist[randIdx[irow], irew];
+      }
+    }
+  }
+  return(R)
+}

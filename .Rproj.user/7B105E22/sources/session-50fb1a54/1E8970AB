@@ -1,0 +1,27 @@
+{
+    "id": "1E8970AB",
+    "path": "~/GitHub/riskPreferences_modelling/riskPref_model_fitting_START.R",
+    "project_path": "riskPref_model_fitting_START.R",
+    "type": "r_source",
+    "hash": "0",
+    "contents": "",
+    "dirty": false,
+    "created": 1692111682723.0,
+    "source_on_save": false,
+    "relative_order": 2,
+    "properties": {
+        "tempName": "Untitled1",
+        "source_window_id": "",
+        "Source": "Source",
+        "cursorPosition": "56,37",
+        "scrollLine": "38"
+    },
+    "folds": "",
+    "lastKnownWriteTime": 1692363950,
+    "encoding": "UTF-8",
+    "collab_server": "",
+    "source_window": "",
+    "last_content_update": 1692363950574,
+    "read_only": false,
+    "read_only_alternatives": []
+}

@@ -1,0 +1,75 @@
+trials <- 120
+stim <- 1:4
+beta <- 0.3
+base <- 0.15
+alphaP <- base * 1
+alphaN <- base
+dist <- 1
+tmp <- c()
+tmp2 <- c()
+outp<-c()
+
+for (iters in 1:1000) {
+  Q <- matrix(50, nrow = 4, ncol = trials)
+  SQ <- matrix(0, nrow = 4, ncol = trials)
+  delta <- matrix(0, nrow = 4, ncol = trials)
+  S <- matrix(1, nrow = 2, ncol = trials)
+  C <- delta
+  if (dist == 1) {
+    R <- matrix(0, nrow = 4, ncol = trials)
+    R[1,] <- rnorm(trials, mean = 60, sd = 15)
+    R[2,] <- rnorm(trials, mean = 60, sd = 5)
+    R[3,] <- rnorm(trials, mean = 40, sd = 15)
+    R[4,] <- rnorm(trials, mean = 40, sd = 5)
+  } else {
+    R <- matrix(0, nrow = 4, ncol = trials)
+    R[1,] <- ifelse(runif(trials) >= 0.8, 300, 0)
+    R[2,] <- ifelse(runif(trials) < 0.8, 75, 0)
+    R[3,] <- ifelse(runif(trials) >= 0.8, 200, 0)
+    R[4,] <- ifelse(runif(trials) < 0.8, 50, 0)
+  }
+  
+  for (t in 2:trials) {
+    temp <- sample(4)
+    opts <- stim[temp[1:2]]
+    prob <- exp(beta * Q[opts[1], t - 1]) / (exp(beta * Q[opts[1], t - 1]) + exp(beta * Q[opts[2], t - 1]))
+    S[, t - 1] <- opts
+    if (runif(1) < prob) {
+      ch <- opts[1]
+    } else {
+      ch <- opts[2]
+    }
+    C[ch, t - 1] <- 1
+    delta[ch, t] <- R[ch, t - 1] - Q[ch, t - 1]
+    
+    Q[, t] <- Q[, t - 1] + (alphaP * delta[, t]) * (delta[, t] >= 0) + (alphaN * delta[, t]) * (delta[, t] < 0)
+  }
+  
+  outp[iters,] <- colMeans(C)
+  indx <- which(max(S) == 2 & min(S) == 1)
+  HH[iters,] <- mean(C[1, indx])
+  indx <- which(max(S) == 4 & min(S) == 3)
+  LL[iters,] <- mean(C[3, indx])
+  
+  indx <- which(max(S) == 3 & min(S) == 1)
+  ACC13[iters,] <- mean(C[1, indx])
+  
+  indx <- which(max(S) == 4 & min(S) == 1)
+  ACC14[iters,] <- mean(C[1, indx])
+  
+  indx <- which(max(S) == 3 & min(S) == 2)
+  ACC23[iters,] <- mean(C[2, indx])
+  
+  indx <- which(max(S) == 4 & min(S) == 2)
+  ACC24[iters,] <- mean(C[2, indx])
+  
+  tmp <- c(tmp, Q[1,])
+  tmp2 <- c(tmp2, Q[2,])
+}
+
+mean(outp)
+mean(HH)
+mean(LL)
+matrix(c(mean(ACC13), mean(ACC14), mean(ACC23), mean(ACC24)), nrow = 2, byrow = TRUE)
+
+plot(Q)
