@@ -77,17 +77,19 @@ function [Qall, choiceType, totalStim] = sim_UCB_riskPref(params, dist, nIters)
             end
     
             % updating of stimulus specific Qt according to delta rule
-            % delta = R{stimIdx}(stimCount(stimIdx)) - Qt(stimIdx);
-
+            delta = R{stimIdx}(stimCount(stimIdx)) - Qt(stimIdx);
+            Qt(stimIdx) =  Qt(stimIdx) + (params.alpha*delta);
+            Qtrack(t, stimIdx) = Qt(stimIdx);
+            
             % updating total amount of rewards obtained in relation to each
             % stimulus choice
 
-            Rt(stimIdx) = Rt(stimIdx) + R{stimIdx}(stimCount(stimIdx));
-
-            % updating of estimated values
-            Qt(stimIdx) =  (Rt(stimIdx) ./stimCount(stimIdx))...
-                +(params.c * sqrt(2*log(t)./stimCount(stimIdx)));
-            Qtrack(t, stimIdx) = Qt(stimIdx);
+%             Rt(stimIdx) = Rt(stimIdx) + R{stimIdx}(stimCount(stimIdx));
+% 
+%             updating of estimated values
+%             Qt(stimIdx) =  (Rt(stimIdx) ./stimCount(stimIdx))...
+%                 +(params.c * sqrt(2*log(t)./stimCount(stimIdx)));
+%             Qtrack(t, stimIdx) = Qt(stimIdx);
     
         end
         for istim = 1:4

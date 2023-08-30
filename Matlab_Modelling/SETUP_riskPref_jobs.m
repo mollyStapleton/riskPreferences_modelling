@@ -18,14 +18,14 @@ cd([base_path repo_path]);
 % SELECT MODEL TO WORK WITH
 %--------------------------------------------------------------
 models                  = {'RW', 'RATES', 'UCB', 'PEIRS'};
-models2run              = [2];
+models2run              = [3];
 nIters                  = 1000;
 
 %------------------------------------------------------------
 % SET REWARD DISTRIBUTION 
 %-----------------------------------------------------------------
 dists       = {'Gaussian', 'Bimodal'};
-dists2run   = [1 2];
+dists2run   = [1];
 %-------------------------------------------------------------
 % SELECT JOB TO RUN 
 %-------------------------------------------------------------------
@@ -49,7 +49,7 @@ if simulate_data
             params.alpha_pos = 0.25;
             params.alpha_neg = 0.15;
         elseif strcmpi(models{models2run(imodel)}, 'UCB')
-%             params.alpha = 0.25;
+            params.alpha = 0.25;
             params.c     = 1;
             params.S     = 0.2;
         elseif strcmpi(models{models2run(imodel)}, 'PEIRS')    
