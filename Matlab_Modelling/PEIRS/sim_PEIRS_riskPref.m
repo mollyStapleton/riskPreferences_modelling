@@ -1,4 +1,4 @@
-function [choiceType, totalStim] = sim_UCB_riskPref(params, dist, nIters)
+function [Qall, Sall, choiceType, totalStim] = sim_PEIRS_riskPref(params, dist, nIters)
 
     choiceType   = NaN(nIters, 120);
     totalStim_L  = NaN(nIters, 120);
@@ -15,48 +15,40 @@ function [choiceType, totalStim] = sim_UCB_riskPref(params, dist, nIters)
     
         R = simulate_rewDist(dist);
         Qt = [params.Q0 params.Q0 params.Q0 params.Q0];
-        Rt = [50 50 50 50];
-    
-        
+        St = [params.S0 params.S0 params.S0 params.S0];
+
         stimCombos       = [12 13 14 21 23 24 31 32 34 41 42 43];
         stimuli(i, :)    = Shuffle(repmat(stimCombos,1,10))';
         stim1            = floor(stimuli(i, :)/10);
         stim2            = stimuli(i, :) - floor(stimuli(i, :)/10)*10;
     
-        stimCount  = [1 1 1 1]; %UCB assumes each arm already sampled once
+        stimCount  = [0 0 0 0];
         p          = NaN(1, 120);
         Qtrack     = NaN(120, 4);
-
-        for t = 2: 120
+        Strack     = NaN(120, 4);
+        
+        for t = 1: 120
             stimL = stim1(t);
             stimR = stim2(t);
+
+            % stimulus prediction error 
+            delta_stim(t) = ( Qt(stimL) + Qt(stimR) ) / 2 - sum(Qt(1:4)) / 4;
+            PEIRS(t)      = tanh(params.omega);
+            % softmax to determine choice
+            v1          = Qt(stimL) + PEIRS(t) + St(stimL);
+            v2          = Qt(stimR) + PEIRS(t) + St(stimR);
+
+            p(i, t)     = exp(params.beta * v1)./(exp(params.beta*v1) + exp(params.beta*v2));
     
-            % UCB rather than softmax to determine choice
-%             V1(t)  = Qt(stimL) + (params.c *(sqrt(2*log(t)./stimCount(stimL))));
-%             V2(t)  = Qt(stimR) + (params.c *(sqrt(2*log(t)./stimCount(stimR))));
-            UCB_v = [Qt(stimL) Qt(stimR)] + (params.c *(sqrt(2*log(t)./ ...
-                max([stimCount(stimL) stimCount(stimR)]))));
-
-            if UCB_v(1) == UCB_v(2) % if UCB for each arm is equal randomly select one arm
-%                 p(i, t)     = exp(params.beta * V1)./(exp(params.beta*V1) + exp(params.beta*V2));
-               rndIdx  = randi([1, 2]);
-               if rndIdx == 1 
-                    stimIdx = stimL;
-               else
-                   stimIdx = stimR;
-               end
-               
-            else % UCB chooses the arm with maximum estimates value
-                choiceIdx = find(UCB_v == (max([UCB_v])));
-                if choiceIdx == 1 
-                    stimIdx = stimL;
-                else 
-                    stimIdx = stimR;
-                end
-
+            if p(i, t) > rand
+                % left stimulus chosen
+                stimIdx = stimL;
+                stimCount(stimIdx) = stimCount(stimIdx) +1;
+            else
+                % right stimulus chosen
+                stimIdx = stimR;
+                stimCount(stimIdx) = stimCount(stimIdx) +1;
             end
-    
-            stimCount(stimIdx) = stimCount(stimIdx) +1;
     
             % only stores relevant choice data for those matched-mean trials,
             % which we use for risk preference calculations
@@ -77,19 +69,22 @@ function [choiceType, totalStim] = sim_UCB_riskPref(params, dist, nIters)
             end
     
             % updating of stimulus specific Qt according to delta rule
-            % delta = R{stimIdx}(stimCount(stimIdx)) - Qt(stimIdx);
+            delta = R{stimIdx}(stimCount(stimIdx)) - Qt(stimIdx);
+            % updating of stimulus specific St 
+            delta_s = abs(delta) - St(stimIdx);
 
-            % updating total amount of rewards obtained in relation to each
-            % stimulus choice
-
-            Rt(stimIdx) = Rt(stimIdx) + R{stimIdx}(stimCount(stimIdx));
-
-            % updating of estimated values
-            Qt(stimIdx) =  (Rt(stimIdx) ./stimCount(stimIdx))...
-                +(params.c * sqrt(2*log(t)./stimCount(stimIdx)));
+            Qt(stimIdx) =  Qt(stimIdx) + (params.alphaQ *delta);
+            St(stimIdx) =  St(stimIdx) + (params.alphaS * delta_s);
+            
             Qtrack(t, stimIdx) = Qt(stimIdx);
-    
+            Strack(t, stimIdx) = St(stimIdx);
         end
+
+          for istim = 1:4
+           Qall{istim}(i, :) =  Qtrack(:, istim);
+           Sall{istim}(i, :) =  Strack(:, istim);
+          end
+
     end
 
     %total times RISKY stimuli shown in matched-mean conditions 

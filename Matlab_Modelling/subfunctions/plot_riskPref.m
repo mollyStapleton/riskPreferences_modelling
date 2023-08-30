@@ -1,4 +1,4 @@
-function plot_riskPref(choiceType, totalStim, Qall, model, dist, params)
+function plot_riskPref(choiceType, totalStim, Qall, Sall, model, dist, params)
 
     if strcmp(dist, 'Gaussian')
         col2plot = {[0.83 0.71 0.98], [0.62 0.35 0.99]};
@@ -8,28 +8,67 @@ function plot_riskPref(choiceType, totalStim, Qall, model, dist, params)
 
     [all, binned] = calculate_riskPref(choiceType, totalStim);
 
-    figure(1);
-    h1 = subplot(1, 3, 1);
-    h2 = subplot(1, 3, 2);
-    h3 = subplot(1, 3, 3);
+    if isempty(Sall)
 
-    for istim = 1:4
-        mean2plot{istim} = nanmean(Qall{istim});
-        sem2plot{istim}  = nanstd(Qall{istim})./sqrt(length((Qall{istim})));
-        axes(h1);
-        hold on 
-        if (istim == 1 || istim == 3) %safe stimuli 
-            lin2plot = '--';
-        else 
-            lin2plot = '-';
-        end
-        if (istim == 1 | istim == 2)
-            plot([1:120], mean2plot{istim}, 'color', col2plot{1}, 'lineStyle', lin2plot, 'LineWidth', 1.2);
-        else
-            plot([1:120], mean2plot{istim}, 'color', col2plot{2}, 'lineStyle', lin2plot, 'LineWidth', 1.2);
-        end
+        figure(1);
+        h1 = subplot(1, 3, 1); %Q
+        h2 = subplot(1, 3, 2); %all risk
+        h3 = subplot(1, 3, 3); %trial binned risk
 
+    else 
+
+        figure(1);
+        h1 = subplot(2, 2, 1); %Q
+        h2 = subplot(2, 2, 2); %all risk 
+        h3 = subplot(2, 2, 4); %trial binned risk
+        h4 = subplot(2, 2, 3); %S
+
+        for istim = 1:4
+            mean2plot_s{istim} = nanmean(Sall{istim});
+            sem2plot_s{istim}  = nanstd(Sall{istim})./sqrt(length((Sall{istim})));
+            axes(h4);
+            hold on 
+            if (istim == 1 || istim == 3) %safe stimuli 
+                lin2plot = '--';
+            else 
+                lin2plot = '-';
+            end
+            if (istim == 1 | istim == 2)
+                plot([1:120], mean2plot_s{istim}, 'color', col2plot{1}, 'lineStyle', lin2plot, 'LineWidth', 1.2);
+            else
+                plot([1:120], mean2plot_s{istim}, 'color', col2plot{2}, 'lineStyle', lin2plot, 'LineWidth', 1.2);
+            end
+
+        end
+        axes(h4);
+        axis square
+        hold on
+        xlim([0 120])
+        title('Svalue');
+        ylabel('Average Estimate S');
+        xlabel('TrialNumber');
+        set(gca, 'FontSize', 14);
+        set(gca, 'FontName', 'Arial');
+        
     end
+
+        for istim = 1:4
+            mean2plot{istim} = nanmean(Qall{istim});
+            sem2plot{istim}  = nanstd(Qall{istim})./sqrt(length((Qall{istim})));
+            axes(h1);
+            hold on 
+            if (istim == 1 || istim == 3) %safe stimuli 
+                lin2plot = '--';
+            else 
+                lin2plot = '-';
+            end
+            if (istim == 1 | istim == 2)
+                plot([1:120], mean2plot{istim}, 'color', col2plot{1}, 'lineStyle', lin2plot, 'LineWidth', 1.2);
+            else
+                plot([1:120], mean2plot{istim}, 'color', col2plot{2}, 'lineStyle', lin2plot, 'LineWidth', 1.2);
+            end
+    
+        end
 
     for ichoice = 1:2
    
@@ -82,6 +121,9 @@ function plot_riskPref(choiceType, totalStim, Qall, model, dist, params)
             ' \alphaNEG = ' num2str(params.alpha_neg) ' \beta = ' num2str(params.beta)]}];
     elseif strcmpi(model, 'UCB')
           titleText = [{['Model: ' model]}, {[' c = ' num2str(params.c) ' \beta = ' num2str(params.beta)]}];
+    elseif strcmpi(model, 'PEIRS')
+           titleText = [{['Model: ' model]}, {['S0 = ' num2str(params.S0) '\alphaQ = ' num2str(params.alphaQ),...
+               '\alphaS = ' num2str(params.alphaS)]}, {['\beta = ' num2str(params.beta) '\omega = ' num2str(params.omega)]}];
     end
 
     sgtitle(titleText)
