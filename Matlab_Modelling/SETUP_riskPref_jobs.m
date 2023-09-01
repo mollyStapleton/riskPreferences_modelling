@@ -29,8 +29,8 @@ dists2run   = [1 2];
 %-------------------------------------------------------------
 % SELECT JOB TO RUN
 %-------------------------------------------------------------------
-simulate_data           = 1;  % Simulate model fits
-simulate_model_effects  = 0;  % Simulate parameter effects on risk preferences
+simulate_data           = 0;  % Simulate model fits
+simulate_model_effects  = 1;  % Simulate parameter effects on risk preferences
 model_fit_to_data       = 0;  % Fit model to existing data
 
 if simulate_model_effects 
@@ -46,8 +46,8 @@ if simulate_model_effects
         if strcmpi(models{models2run(imodel)} , 'RW')
             params.alpha        = linspace(0.1, 1, 10);
         elseif strcmpi(models{models2run(imodel)} , 'RATES')
-            params.alpha_pos    = 0.25;
-            params.alpha_neg    = 0.15;
+            params.alpha_pos    = linspace(0.1, 1, 10);
+            params.alpha_neg    = linspace(0.1, 1, 10);
         elseif strcmpi(models{models2run(imodel)}, 'UCB')
             params.alpha        = 0.25;
             params.c            = 1;
@@ -58,16 +58,13 @@ if simulate_model_effects
             params.alphaS       = 0.15;
             params.omega        = 0.03;
         end
-        
-        for idist = 1: length(dists2run)
-            clf;
-            parPredict_riskPref(models{models2run(imodel)}, params, dists{idist}, nIters);
-            saveFigname = [models{models2run(imodel)} '_' dists{idist} '_paramPredictions'];
-            cd([base_path save_path '\parameter_simulations']);
-            print(saveFigname, '-dpdf');
-            print(saveFigname, '-dpng');
-        end
 
+            clf;
+            parPredict_riskPref(models{models2run(imodel)}, params, dists, nIters);
+            saveFigname = [models{models2run(imodel)} '_paramPredictions'];
+            cd([base_path save_path '\parameter_simulations']);
+            print(saveFigname, '-dsvg');
+            print(saveFigname, '-dpng');
     end
 
 end
@@ -83,7 +80,7 @@ if simulate_data
         params.Q0               = 50; % FIXED PARAMETER, DO NOT CHANGE
         params.beta             = 0.8; %softmax temperature parameter included in all models
         if strcmpi(models{models2run(imodel)} , 'RW')
-            params.alpha        = 0.5;
+            params.alpha        = 0.3;
         elseif strcmpi(models{models2run(imodel)} , 'RATES')
             params.alpha_pos    = 0.25;
             params.alpha_neg    = 0.15;
@@ -112,7 +109,7 @@ if simulate_data
         end
             cd([base_path save_path '\simulations'])
             figSavename = [models{models2run(imodel)}];
-            print(figSavename, '-dpdf');
+            print(figSavename, '-dsvg');
             print(figSavename, '-dpng');
 
         end

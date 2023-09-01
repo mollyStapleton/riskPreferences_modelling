@@ -4,6 +4,9 @@ function parPredict_riskPref(model, params, dist, nIters)
 if strcmpi(model, 'RW')
         paramPredict_RW_riskPref(params, dist, nIters);
 end
+if strcmpi(model, 'RATES')
+        paramPredict_RATES_riskPref(params, dist, nIters);
+end
 
 % if strcmpi(model, 'RATES')
 %     [Qall, choiceType, totalStim] = sim_RATES_riskPref(params, dist, nIters);
