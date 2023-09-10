@@ -50,7 +50,7 @@ for idist = 1:2
             end
         end
             hold on
-            imagesc(mean2plot_risk{itype});
+            imagesc(mean2plot_risk{idist, itype});
             set(gca,'Ydir','normal');
             set(gca, 'XTick', [1:length(params.alpha)]);
             set(gca, 'YTick', [1:length(params.beta)]);
