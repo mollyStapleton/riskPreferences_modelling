@@ -17,8 +17,8 @@ cd([base_path repo_path]);
 %------------------------------------------------------
 % SELECT MODEL TO WORK WITH
 %--------------------------------------------------------------
-models                  = {'RW', 'RATES', 'UCB', 'PEIRS'};
-models2run              = [2];
+models                  = {'RW', 'RATES', 'UCB_nCount', 'UCB_spread', 'PEIRS'};
+models2run              = [4];
 nIters                  = 100;
 
 %------------------------------------------------------------
@@ -26,12 +26,12 @@ nIters                  = 100;
 %-----------------------------------------------------------------
 distSplit   = 1; % whether to collapse all distributions or perform jobs separately
 dists       = {'Gaussian', 'Bimodal'};
-dists2run   = [1];
+dists2run   = [1 2];
 %-------------------------------------------------------------
 % SELECT JOB TO RUN
 %-------------------------------------------------------------------
-simulate_data           = 0;  % Simulate model fits
-simulate_model_effects  = 1;  % Simulate parameter effects on risk preferences
+simulate_data           = 1;  % Simulate model fits
+simulate_model_effects  = 0;  % Simulate parameter effects on risk preferences
 model_fit_to_data       = 0;  % Fit model to existing data
 
 
@@ -53,16 +53,19 @@ if simulate_data
         % script
         %----------------------------------------------------------------
         params.Q0               = 50; % FIXED PARAMETER, DO NOT CHANGE
-        params.beta             = 0.8; %softmax temperature parameter included in all models
+        params.beta             = 0.7; %softmax temperature parameter included in all models
         if strcmpi(models{models2run(imodel)} , 'RW')
             params.alpha        = 0.3;
         elseif strcmpi(models{models2run(imodel)} , 'RATES')
             params.alpha_pos    = 0.25;
             params.alpha_neg    = 0.15;
-        elseif strcmpi(models{models2run(imodel)}, 'UCB')
-            params.alpha        = 0.25;
-            params.c            = 1;
-            params.S            = 0.2;
+        elseif strcmpi(models{models2run(imodel)}, 'UCB_nCount')
+            params.alpha        = 0.5;
+            params.c            = 0.5;
+        elseif strcmpi(models{models2run(imodel)}, 'UCB_spread')
+            params.alpha        = 0.5;
+            params.c            = 0.5;
+            params.s            = [5 15 5 15];
         elseif strcmpi(models{models2run(imodel)}, 'PEIRS')
             params.S0           = 0.15;
             params.alphaQ       = 0.25;
@@ -114,14 +117,13 @@ if simulate_model_effects
         params.Q0               = 50; % FIXED PARAMETER, DO NOT CHANGE
         params.beta             = linspace(0.1, 1, 10); %softmax temperature parameter included in all models
         if strcmpi(models{models2run(imodel)} , 'RW')
-            params.alpha        = linspace(0.1, 1, 10);
+            params.alpha        = linspace(0.1, 1, 20);
         elseif strcmpi(models{models2run(imodel)} , 'RATES')
-            params.alpha_pos    = linspace(0.1, 1, 10);
-            params.alpha_neg    = linspace(0.1, 1, 10);
-        elseif strcmpi(models{models2run(imodel)}, 'UCB')
-            params.alpha        = 0.25;
-            params.c            = 1;
-            params.S            = 0.2;
+            params.alpha_pos    = linspace(0.1, 1, 20);
+            params.alpha_neg    = linspace(0.1, 1, 20);
+        elseif strcmpi(models{models2run(imodel)}, 'UCB_nCount')
+            params.alpha        = linspace(0.1, 1, 20);
+            params.c            = linspace(0.1, 1, 20);
         elseif strcmpi(models{models2run(imodel)}, 'PEIRS')
             params.S0           = 0.15;
             params.alphaQ       = 0.25;

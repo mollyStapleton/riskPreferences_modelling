@@ -119,8 +119,12 @@ function plot_riskPref(choiceType, totalStim, Qall, Sall, model, dist, params)
     elseif strcmpi(model, 'RATES')
         titleText = [{['Model: ' model]}, {['\alphaPOS = ' num2str(params.alpha_pos),...
             ' \alphaNEG = ' num2str(params.alpha_neg) ' \beta = ' num2str(params.beta)]}];
-    elseif strcmpi(model, 'UCB')
-          titleText = [{['Model: ' model]}, {[' c = ' num2str(params.c) ' \beta = ' num2str(params.beta)]}];
+    elseif strcmpi(model, 'UCB_nCount')
+          titleText = [{['Model: ' model]}, {['\alpha = ' num2str(params.alpha),...
+              ' c = ' num2str(params.c) ' \beta = ' num2str(params.beta)]}];
+    elseif strcmpi(model, 'UCB_spread')
+         titleText = [{['Model: ' model]}, {['\alpha = ' num2str(params.alpha),...
+              ' c = ' num2str(params.c) ' \beta = ' num2str(params.beta)]}];
     elseif strcmpi(model, 'PEIRS')
            titleText = [{['Model: ' model]}, {['S0 = ' num2str(params.S0) '\alphaQ = ' num2str(params.alphaQ),...
                '\alphaS = ' num2str(params.alphaS)]}, {['\beta = ' num2str(params.beta) '\omega = ' num2str(params.omega)]}];

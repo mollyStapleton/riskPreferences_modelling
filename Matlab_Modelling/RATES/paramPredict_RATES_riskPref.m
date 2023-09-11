@@ -3,6 +3,7 @@ function paramPredict_RATES_riskPref(params, dist, nIters)
 figure(1);
 
 params.beta = params.beta(1:2:end);
+
 for idist = 1: length(dist)
     countalpha_pos = 0; countalpha_neg = 0; countbeta = 0;
 
@@ -50,14 +51,15 @@ for idist = 1:2
             hold on
             imagesc(mean2plot_risk{idist, itype}{iplot});
             set(gca,'Ydir','normal');
-            set(gca, 'XTick', [1: 2: length(params.alpha_neg)]);
-            set(gca, 'YTick', [1: 2: length(params.alpha_pos)]);
+            set(gca, 'XTick', [1: 4: length(params.alpha_neg)]);
+            set(gca, 'YTick', [1: 4: length(params.alpha_pos)]);
             set(gca, 'XLim', [1 length(params.alpha_neg)]);
             set(gca, 'YLim', [1 length(params.alpha_pos)]);
-            set(gca, 'XTickLabel', params.alpha_neg(1:2:end));
+            set(gca, 'XTickLabel', round(params.alpha_neg(1:4:end), 2));
+            set(gca, 'XTickLabelRotation', 45);
             xlabel('\fontsize{12} \bf \alphaNEG');
             ylabel('\fontsize{12} \bf \alphaPOS');
-            set(gca, 'YTickLabel', params.alpha_pos(1:2:end));
+            set(gca, 'YTickLabel', round(params.alpha_pos(1:4:end), 2));
             if iplot == 1
                 if itype == 1
                     ttext = [{dist{idist},' P(Risky): LL'}];
@@ -75,6 +77,6 @@ C = colormap(flipud(cbrewer2('RdBu', 100)));
 gcf;
 C1 = colorbar;
 C1.Position = [0.93 0.27 0.03 0.5];
-%             C1.Limits   = [0.2 0.6];
+C1.Limits   = [0.1 0.6];
 set(gcf, 'Position', [232.2000 1.8000 1.2688e+03 780.8000]);
 end
