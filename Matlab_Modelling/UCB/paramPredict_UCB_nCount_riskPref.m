@@ -2,7 +2,7 @@ function paramPredict_UCB_nCount_riskPref(params, dist, nIters)
 
 figure(1);
 
-params.beta = params.beta(1:2:end);
+params.beta = params.beta(1:4:end);
 for idist = 1: length(dist)
    countalpha = 0; countc = 0; countbeta = 0;
 
@@ -41,6 +41,7 @@ end
 
 % set indices for subplot locations 
 plotLoc = [{[1 5 9 13 17; 2 6 10 14 18]}, {[3 7 11 15 19; 4 8 12 16 20]}];
+C = colormap(flipud(cbrewer2('RdBu')));
 for idist = 1:2
     for itype = 1:2
         for iplot = 1: length(plotLoc{idist}(1, :))
@@ -69,13 +70,14 @@ for idist = 1:2
             end
             
             set(gca, 'FontName', 'Arial');
+            caxis([0 1]);
         end
     end
 end
-C = colormap(flipud(cbrewer2('RdBu', 100)));
+
 gcf;
 C1 = colorbar;
 C1.Position = [0.93 0.27 0.03 0.5];
-C1.Limits   = [0.1 0.3];
+C1.Limits   = [0 1];
 set(gcf, 'Position', [232.2000 1.8000 1.2688e+03 780.8000]);
 end

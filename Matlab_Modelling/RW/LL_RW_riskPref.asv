@@ -20,9 +20,18 @@ for t = 1: 120
     if stimL == stimIdx(t);
         choice_dir(t) = 1;
     end
-
-    % probability of choosing left target 
-    choiceProb(t) = p(t);
+    % only stores relevant choice data for those matched-mean trials,
+    % which we use for risk preference calculations
+%     if dataIn.cnd_idx(t) == 2 || dataIn.cnd_idx(t) == 3
+%         choiceProb(t) = p(t);
+%         if (stimIdx(t) == 2)
+%             % choice LL-RISKY
+%             choiceType(t) = -1;
+%         elseif (stimIdx(t) == 4)
+%             % choice HH-RISKY
+%             choiceType(t) = 1;
+%         end
+%     end
 
     % updating of stimulus specific Qt according to delta rule
 

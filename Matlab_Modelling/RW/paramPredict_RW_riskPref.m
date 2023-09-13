@@ -30,6 +30,9 @@ for idist = 1: length(dist)
         end
     end
 end
+C = colormap(flipud(cbrewer2('RdBu')));
+% caxis([0 0.5]);
+
 for idist = 1:2
     for itype = 1:2
         if idist == 1
@@ -52,14 +55,14 @@ for idist = 1:2
             hold on
             imagesc(mean2plot_risk{idist, itype});
             set(gca,'Ydir','normal');
-            set(gca, 'XTick', [1:4:length(params.alpha)]);
-            set(gca, 'YTick', [1:4:length(params.beta)]);
+            set(gca, 'YTick', [1:4:length(params.alpha)]);
+            set(gca, 'XTick', [1:4:length(params.beta)]);
             set(gca, 'XLim', [1 length(params.beta)]);
             set(gca, 'YLim', [1 length(params.alpha)]);
-            set(gca, 'XTickLabel', round(params.alpha(1:4:end), 2));
+            set(gca, 'YTickLabel', round(params.alpha(1:4:end), 2));
             xlabel('\fontsize{12} \bf \beta');
             ylabel('\fontsize{12} \bf \alpha');
-            set(gca, 'YTickLabel', round(params.beta(1:4:end), 2));
+            set(gca, 'XTickLabel', round(params.beta(1:4:end), 2));
             set(gca, 'XTickLabelRotation', 45)
             if itype == 1
                 ttext = [{dist{idist},' P(Risky): LL'}];
@@ -68,14 +71,14 @@ for idist = 1:2
             end
             title(ttext, 'FontWeight', 'bold', 'FontSize', 12);
             set(gca, 'FontName', 'Arial');
+            caxis([0 1]);
     end
 end
 
-C = colormap(flipud(cbrewer2('RdBu', 100)));
 gcf;
 C1 = colorbar;
 C1.Position = [0.93 0.27 0.03 0.5];
-            C1.Limits   = [0 0.35];
+C1.Limits   = [0 1];
 set(gcf, 'Position', [505 51.4000 816 731.2000]);
 
 

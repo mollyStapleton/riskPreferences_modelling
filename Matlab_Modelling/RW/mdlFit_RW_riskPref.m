@@ -9,6 +9,17 @@ function [best_fit_parm, LL, BIC] = mdlFit_RW_riskPref(dataIn, params, dist, dis
 %%% 3) Choice made 
 %%% 4) reward obtained
 %--------------------------------------------------------------------------
+p = gcp('nocreate');
+if ~isempty(p)
+    Nwork = p.NumWorkers;
+else
+    Nwork = 0;
+end
+if Nwork ~= 4
+  delete(gcp('nocreate'))
+  parpool('local', 4, 'IdleTimeout', 30);
+end
+
 
 % if model fitting to be split by reward distribution, identify
 % distribution specific trials
@@ -30,8 +41,8 @@ end
     % function inputs (dataIn, alpha, beta)
 
     obFunc = @(x) LL_RW_riskPref(dataIn, x(1), x(2));
-    LB = [0 1];
-    UB = [1 inf];
+    LB = [0 0];
+    UB = [1 1];
     % return set of parameters to be fit (alpha and beta for RW model)
     for iter = 1:nIters
         X0(iter,:) = [params.alpha(iter) params.beta(iter)];
@@ -39,12 +50,11 @@ end
     
     % setting for optimization function
     feval = [50000, 50000]; % max number of function evaluations and iterations
-    options = optimset('MaxFunEvals',feval(1),'MaxIter',feval(2),'TolFun',1e-10,'TolX',...
-         1e-10, 'TolCon', 1e-10, 'Display','none');
+    options = optimset('MaxFunEvals',feval(1),'MaxIter',feval(2),'Display','iter');
     
         for iter = 1:nIters
             %     parfor iter = 1:Nfit
-             [Xfit_grid(iter,:), NegLL_grid(iter)] = fminsearchbnd(obFunc, X0(iter,:), [], [], options);
+             [Xfit_grid(iter,:), NegLL_grid(iter)] = fminsearchbnd(obFunc, X0(iter,:), LB, UB, options);
         end
 
     [~,best] = min(NegLL_grid);
