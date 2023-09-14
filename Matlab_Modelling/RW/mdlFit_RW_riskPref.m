@@ -50,15 +50,16 @@ end
     
     % setting for optimization function
     feval = [50000, 50000]; % max number of function evaluations and iterations
-    options = optimset('MaxFunEvals',feval(1),'MaxIter',feval(2),'Display','iter');
+    options = optimset('MaxFunEvals',feval(1),'MaxIter',feval(2),'Display','none');
     
         for iter = 1:nIters
             %     parfor iter = 1:Nfit
-             [Xfit_grid(iter,:), NegLL_grid(iter)] = fminsearchbnd(obFunc, X0(iter,:), LB, UB, options);
+%              [Xfit_grid(iter,:), NegLL_grid(iter)] = fminsearchbnd(obFunc, X0(iter,:), LB, UB, options);
+            [Xfit_grid(iter,:), NegLL_grid(iter,1)] = fmincon(obFunc,X0(iter,:),[],[],[],[],LB,UB,[],options);
         end
 
     [~,best] = min(NegLL_grid);
-    Xfit = Xfit_grid(best,:);
+    best_fit_parm = Xfit_grid(best,:);
     NegLL = NegLL_grid(best);
 
     LL = -NegLL;

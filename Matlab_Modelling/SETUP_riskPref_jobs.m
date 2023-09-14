@@ -18,7 +18,7 @@ cd([base_path repo_path]);
 % SELECT MODEL TO WORK WITH
 %--------------------------------------------------------------
 models                  = {'RW', 'RATES', 'UCB_nCount', 'UCB_spread', 'PEIRS'};
-models2run              = [1];
+models2run              = [3];
 nIters                  = 50;
 
 %------------------------------------------------------------
@@ -31,8 +31,8 @@ dists2run   = [1];
 % SELECT JOB TO RUN
 %-------------------------------------------------------------------
 simulate_data           = 0;  % Simulate model fits
-simulate_model_effects  = 0;  % Simulate parameter effects on risk preferences
-model_fit_to_data       = 1;  % Fit model to existing data
+simulate_model_effects  = 1;  % Simulate parameter effects on risk preferences
+model_fit_to_data       = 0;  % Fit model to existing data
 
 
 %-----------------------------------------------------------------------------
@@ -123,7 +123,7 @@ if simulate_model_effects
             params.alpha_neg    = linspace(0.1, 1, 20);
         elseif strcmpi(models{models2run(imodel)}, 'UCB_nCount')
             params.alpha        = linspace(0.1, 1, 20);
-            params.c            = linspace(0.01, 0.09, 20);
+            params.c            = linspace(1, 2, 20);
         elseif strcmpi(models{models2run(imodel)}, 'PEIRS')
             params.S0           = 0.15;
             params.alphaQ       = 0.25;
@@ -168,7 +168,7 @@ if model_fit_to_data
         params.Q0               = 50; % FIXED PARAMETER, DO NOT CHANGE
 %         params.beta             = log(normrnd(-2, 2, [1 nIters])); %softmax temperature parameter included in all models
 %         params.beta             = (0.09 - 0.01) * rand(1, nIters) + 0.01;
-            params.beta           = rand(1, nIters);
+            params.beta           = exprnd(1, nIters);
         if strcmpi(models{models2run(imodel)} , 'RW')
             params.alpha        = rand(1, nIters);
 %             params.alpha        = VBA_sigmoid(normrnd(-1, 2, [1 nIters]));
@@ -190,12 +190,10 @@ if model_fit_to_data
 
                 data2run   = allTr_allSubjects([allTr_allSubjects.pt_number == subs(isubject)], [1:10 15]);
                 
-                [best_fit_parm{isubject}, LL(isubject), BIC(isubject)] = modelFitting_riskPref(data2run, models{models2run(imodel)}, params, dists{dists2run}, distSplit, nIters);
-                saveFigname = [models{models2run(imodel)} '_paramPredictions'];
-                cd([base_path save_path '\parameter_simulations']);
-                print(saveFigname, '-dsvg');
-                print(saveFigname, '-dpng');
-            end
+                [best_fit_parm(isubject, :), LL(isubject), BIC(isubject)] = modelFitting_riskPref(data2run, models{models2run(imodel)}, params, dists{dists2run}, distSplit, nIters);
+               
+           end
     end
+    delete(gcp('nocreate'));
 
 end
