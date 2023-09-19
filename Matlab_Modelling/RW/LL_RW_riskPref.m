@@ -1,11 +1,12 @@
-function [NegLL,choiceProb, Qs] = LL_RW_riskPref(dataIn, a, b)
+function [NegLL,choiceProb, choice_dir, Qs] = LL_RW_riskPref(dataIn, a, b)
 
+nTrials      = size(dataIn, 1);
 Qt           = [50 50 50 50]*0+50;
-choice_dir   = zeros(1, 120);
-choiceProb   = NaN(1, 120);
-Qs           = NaN(4, 120);
+choice_dir   = zeros(1, nTrials);
+choiceProb   = NaN(1, nTrials);
+Qs           = NaN(4, nTrials);
 
-for t = 1: 120
+for t = 1: nTrials
  
     stimL = dataIn.stim_l(t);
     stimR = dataIn.stim_r(t);

@@ -18,7 +18,7 @@ cd([base_path repo_path]);
 % SELECT MODEL TO WORK WITH
 %--------------------------------------------------------------
 models                  = {'RW', 'RATES', 'UCB_nCount', 'UCB_spread', 'PEIRS'};
-models2run              = [3];
+models2run              = [1];
 nIters                  = 50;
 
 %------------------------------------------------------------
@@ -31,9 +31,9 @@ dists2run   = [1];
 % SELECT JOB TO RUN
 %-------------------------------------------------------------------
 simulate_data           = 0;  % Simulate model fits
-simulate_model_effects  = 1;  % Simulate parameter effects on risk preferences
+simulate_model_effects  = 0;  % Simulate parameter effects on risk preferences
 model_fit_to_data       = 0;  % Fit model to existing data
-
+plot_model_fit          = 1;
 
 %-----------------------------------------------------------------------------
 % SIMULATE DATA 
@@ -150,14 +150,13 @@ end
 
 
 if model_fit_to_data 
+    data2save = [];
 %   load in relevant subject data
     cd([base_path data_path]);
     load('allTr_allSubjects.mat');
-    subs = unique(allTr_allSubjects.pt_number);
-%     subIdx = [{'019', '020', '021', '022', '023', '024',...
-%     '025', '026', '027', '028', '029', '030', '031',...
-%     '033', '034', '036', '037', '038',...
-%     '039', '040', '042', '044', '045', '046', '047', '048', '049', '050'}];
+%     subs = [21 22 23 24 26 28 29 30 32 33 34 35 36 37,...
+%         39 40 42 44 45 46 47 49 50 51];
+subs = [21];
 
     for imodel = 1: length(models2run)
         %-------------------------------------------------------------
@@ -168,7 +167,7 @@ if model_fit_to_data
         params.Q0               = 50; % FIXED PARAMETER, DO NOT CHANGE
 %         params.beta             = log(normrnd(-2, 2, [1 nIters])); %softmax temperature parameter included in all models
 %         params.beta             = (0.09 - 0.01) * rand(1, nIters) + 0.01;
-            params.beta           = exprnd(1, nIters);
+            params.beta           = (0 - 2) * rand(1, nIters) + 2;
         if strcmpi(models{models2run(imodel)} , 'RW')
             params.alpha        = rand(1, nIters);
 %             params.alpha        = VBA_sigmoid(normrnd(-1, 2, [1 nIters]));
@@ -188,12 +187,43 @@ if model_fit_to_data
 
             for isubject = 1: length(subs)
 
-                data2run   = allTr_allSubjects([allTr_allSubjects.pt_number == subs(isubject)], [1:10 15]);
+                data2run   = allTr_allSubjects([allTr_allSubjects.pt_number == subs(isubject)], [1:10 16]);
                 
                 [best_fit_parm(isubject, :), LL(isubject), BIC(isubject)] = modelFitting_riskPref(data2run, models{models2run(imodel)}, params, dists{dists2run}, distSplit, nIters);
                
-           end
+                tmpData = [subs(isubject) best_fit_parm(isubject,1) best_fit_parm(isubject, 2) LL(isubject) BIC(isubject)];
+                data2save = [data2save; tmpData];
+    
+            end
+
+                data2save = array2table(data2save);
+                data2save.Properties.VariableNames = {'ptIdx', 'alpha', 'beta', 'LL', 'BIC'};
+                saveTablename = [models{models2run} '_subjectLvl_paramFits_' dists{dists2run} '.mat'];
+                cd([base_path save_path '\model_fits']);
+                save( saveTablename, 'data2save')
     end
     delete(gcp('nocreate'));
 
 end
+
+if plot_model_fit
+    cd([base_path data_path]);
+    load('allTr_allSubjects.mat');
+%     subs = [21 22 23 24 26 28 29 30 32 33 34 35 36 37,...
+%         39 40 42 44 45 46 47 49 50 51];
+    subs = [21];
+    for imodel = 1: length(models2run)
+        cd([base_path save_path '\model_fits']);
+        load([models{models2run} '_subjectLvl_paramFits_' dists{dists2run} '.mat'])
+        %load in previously generated parameter fits 
+
+        for isubject = 1: length(subs)
+            
+            trueData   = allTr_allSubjects([allTr_allSubjects.pt_number == subs(isubject)], [1:10 12 13 16]);
+            paramFit    = data2save(data2save.ptIdx == subs(isubject), :); 
+            
+            plotFit_riskPref(trueData, paramFit, models{models2run}, dists{dists2run})
+
+        end 
+    end
+end 

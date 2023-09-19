@@ -1,0 +1,29 @@
+function plotFit_RW_riskPref(dataIn, paramFit, dist)
+
+    if strcmp(dist, 'Gaussian')
+        col2plot = {[0.83 0.71 0.98], [0.62 0.35 0.99]};
+    else 
+        col2plot = {[0.58 0.99 0.56], [0.19 0.62 0.14]};
+    end
+
+    % calculate risk preference from TRUE data
+    [riskyChoiceTrue, binnedRisk] = calculate_riskPref_trueData(dataIn, dist);
+
+    % simulate data fit using parameter fits 
+    params.Q0 = [50 50 50 50];
+    params.alpha = paramFit.alpha;
+    params.beta  = paramFit.beta;
+
+    [NegLL,choiceProb, Qs] = LL_RW_riskPref(dataIn, paramFit.alpha, paramFit.beta);
+    
+    [riskChoiceFit, binnedRiskFit] = calculate_riskPref(choiceType, totalStim);
+
+    figure(1);
+    for icnd = 1:2        
+        hold on 
+        plot([1:5], binnedRisk(icnd, :), 'color', col2plot{icnd}, 'linew', 1.2);
+        errorbar(binnedRiskFit{1, icnd}, binnedRiskFit{2, icnd}, 'color', col2plot{icnd}, 'linew', 1.2, 'lineStyle', '--');
+    end
+
+    
+end 

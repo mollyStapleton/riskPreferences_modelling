@@ -1,5 +1,6 @@
 function [data_all, data_binned] = calculate_riskPref(choiceType, totalStim)
 
+
     % single trial risk preference calculations
     for itrial = 1:120
         risky_choice{1}(itrial) = sum(choiceType(:, itrial) == -1)./totalStim{1}(itrial);
