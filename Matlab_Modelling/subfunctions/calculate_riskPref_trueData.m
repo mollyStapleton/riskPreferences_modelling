@@ -16,8 +16,8 @@ function [riskyChoiceTrue, binnedRisk] = calculate_riskPref_trueData(data2use, d
 
         trIdx = [];
         trIdx = find(ismember(data2use.trialNum, (bin(ibin): (bin(ibin) + binSize -1)))==1);
-        binnedRisk(1, ibin) = sum(data2use.choiceType(trIdx) == -1 )./ sum(data2use.cnd_idx(trIdx) == 2);
-        binnedRisk(2, ibin) = sum(data2use.choiceType(trIdx) == 1 )./ sum(data2use.cnd_idx(trIdx) == 3);
+        binnedRisk{1}(ibin) = sum(data2use.choiceType(trIdx) == -1 )./ sum(data2use.cnd_idx(trIdx) == 2);
+        binnedRisk{2}(ibin) = sum(data2use.choiceType(trIdx) == 1 )./ sum(data2use.cnd_idx(trIdx) == 3);
         
 
     end

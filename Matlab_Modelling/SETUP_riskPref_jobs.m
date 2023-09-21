@@ -154,9 +154,9 @@ if model_fit_to_data
 %   load in relevant subject data
     cd([base_path data_path]);
     load('allTr_allSubjects.mat');
-%     subs = [21 22 23 24 26 28 29 30 32 33 34 35 36 37,...
-%         39 40 42 44 45 46 47 49 50 51];
-subs = [21];
+    subs = [21 22 23 24 26 28 29 30 32 33 34 35 36 37,...
+        39 40 42 44 45 46 47 49 50 51];
+% subs = [21];
 
     for imodel = 1: length(models2run)
         %-------------------------------------------------------------
@@ -198,7 +198,7 @@ subs = [21];
 
                 data2save = array2table(data2save);
                 data2save.Properties.VariableNames = {'ptIdx', 'alpha', 'beta', 'LL', 'BIC'};
-                saveTablename = [models{models2run} '_subjectLvl_paramFits_' dists{dists2run} '.mat'];
+                saveTablename = [models{models2run} '_subjectLvl_paramFits_240_' dists{dists2run} '.mat'];
                 cd([base_path save_path '\model_fits']);
                 save( saveTablename, 'data2save')
     end
@@ -209,21 +209,43 @@ end
 if plot_model_fit
     cd([base_path data_path]);
     load('allTr_allSubjects.mat');
-%     subs = [21 22 23 24 26 28 29 30 32 33 34 35 36 37,...
-%         39 40 42 44 45 46 47 49 50 51];
-    subs = [21];
+    subs = [21 22 23 24 26 28 29 30 32 33 34 35 36 37,...
+        39 40 42 44 45 46 47 49 50 51];
+    %     subs = [21];
     for imodel = 1: length(models2run)
-        cd([base_path save_path '\model_fits']);
-        load([models{models2run} '_subjectLvl_paramFits_' dists{dists2run} '.mat'])
-        %load in previously generated parameter fits 
+        cd([base_path save_path '\model_fits\' models{models2run}]);
+        load([models{models2run} '_subjectLvl_paramFits_240_' dists{dists2run} '.mat'])
+        %load in previously generated parameter fits
+        dataFilename = ['dataPlot_truevsfit_' models{models2run} '_' dists{dists2run} '.mat'];
+        if ~exist(dataFilename)
+            for isubject = 1: length(subs)
+    
+                trueData   = allTr_allSubjects([allTr_allSubjects.pt_number == subs(isubject)], [1:10 12 13 16]);
+                paramFit    = data2save(data2save.ptIdx == subs(isubject), :);
+                clf;
+                [meanTrue(isubject, :), meanFit(isubject, :), binnedTrue(isubject, :), binnedFit(isubject, :)]...
+                    = plotData_riskPref(trueData, paramFit, models{models2run}, dists{dists2run});
+                
 
-        for isubject = 1: length(subs)
-            
-            trueData   = allTr_allSubjects([allTr_allSubjects.pt_number == subs(isubject)], [1:10 12 13 16]);
-            paramFit    = data2save(data2save.ptIdx == subs(isubject), :); 
-            
-            plotFit_riskPref(trueData, paramFit, models{models2run}, dists{dists2run})
+            end
 
-        end 
+            % save risk preference data: TRUE and FITTED
+            
+            plotData.meanTrue = meanTrue;
+            plotData.meanFit  = meanFit;
+            plotData.binnedTrue = binnedTrue;
+            plotData.binnedFit = binnedFit;
+            cd([base_path save_path '\model_fits\RW']);
+            saveFilename = ['dataPlot_truevsfit_' models{models2run} '_' dists{dists2run} '.mat'];
+            save(saveFilename, 'plotData');
+        else
+
+            load(dataFilename);
+            paramFits = data2save;
+            plotFit_riskPref(plotData, paramFits, models{models2run}, dists{dists2run})
+          
+
+
+        end
     end
-end 
+end
