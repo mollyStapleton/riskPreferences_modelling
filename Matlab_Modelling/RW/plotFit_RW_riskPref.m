@@ -81,7 +81,7 @@ axes(h4);
 xlabel('Trial No.');
 ylabel('P(Risky)');
 title('Low-Low');
-ylim([0.3 0.7]);
+ylim([0 0.7]);
 xlim([0 6]);
 hold on 
 plot([0 6], [0.5 0.5], 'k--');
@@ -90,10 +90,13 @@ axes(h5);
 xlabel('Trial No.');
 ylabel('P(Risky)');
 title('High-High');
-ylim([0.3 0.7]);
+ylim([0 0.7]);
 xlim([0 6]);
 hold on 
 plot([0 6], [0.5 0.5], 'k--');
 set(gca, 'FontName', 'Arial');
 
+
+sgTxt = [{'True Data vs RW Model Fits', 'Risk-Attitudes'}];
+sgtitle(sgTxt, 'FontWeight', 'Bold', 'FontName', 'Arial');
 end

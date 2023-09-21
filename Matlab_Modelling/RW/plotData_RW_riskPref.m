@@ -34,9 +34,12 @@ function [meanTrue, meanFit, binnedTrue, binnedFit] = plotFit_RW_riskPref(dataIn
         trIdx = [];
         trIdx = find(ismember(data2use.trialNum, (bin(ibin): (bin(ibin) + binSize -1)))==1);
 
-        binned_cp{1}(ibin) = nanmean(data2use.choiceProb(data2use.choiceType(trIdx) == -1));
-        binned_cp{2}(ibin) = nanmean(data2use.choiceProb(data2use.choiceType(trIdx) == 1));
+        binned_cp{1}(ibin) = sum(data2use.choiceProb(data2use.choiceType(trIdx) == -1))./sum(data2use.cnd_idx(trIdx) == 2);
+        binned_cp{2}(ibin) = sum(data2use.choiceProb(data2use.choiceType(trIdx) == 1))./sum(data2use.cnd_idx(trIdx) == 3);
     
+%         binned_cp{1}(ibin) = nanmean(data2use.choiceProb(data2use.choiceType(trIdx) == -1));
+%         binned_cp{2}(ibin) = nanmean(data2use.choiceProb(data2use.choiceType(trIdx) == 1));
+%     
     end
 
     meanFit(1, :) = nanmean(data2use.choiceProb(data2use.choiceType == -1));

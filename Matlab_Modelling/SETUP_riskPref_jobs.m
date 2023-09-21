@@ -217,7 +217,7 @@ if plot_model_fit
         load([models{models2run} '_subjectLvl_paramFits_240_' dists{dists2run} '.mat'])
         %load in previously generated parameter fits
         dataFilename = ['dataPlot_truevsfit_' models{models2run} '_' dists{dists2run} '.mat'];
-        if ~exist(dataFilename)
+        if exist(dataFilename)
             for isubject = 1: length(subs)
     
                 trueData   = allTr_allSubjects([allTr_allSubjects.pt_number == subs(isubject)], [1:10 12 13 16]);
