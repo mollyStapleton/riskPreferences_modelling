@@ -251,9 +251,10 @@ if plot_model_fit
             print(figSavename_1, '-dpng');
             figSavename_2 = [models{models2run} '_' dists{dists2run} '_modelFit_accuracy'];
             figure(2);
-            gcf;
-            set(gcf, 'Position', [488 171.4000 779.4000 590.6000]);
             print(figSavename_2, '-dpng');
+
+          
+
 
         end
     end

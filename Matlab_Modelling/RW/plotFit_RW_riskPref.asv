@@ -2,8 +2,10 @@ function plotFit_RW_riskPref(dataIn, paramFit, dist)
 
 if strcmp(dist, 'Gaussian')
     col2plot = {[0.83 0.71 0.98], [0.62 0.35 0.99]};
+    C = [colormap(cbrewer2('BuPu', 40))];
 else
     col2plot = {[0.58 0.99 0.56], [0.19 0.62 0.14]};
+    C =  [colormap(cbrewer2('YlGn', 40))];
 end
     col2plot_fit = {[0.7 0.7 0.7], [0 0 0]};
 figure(1);
@@ -96,7 +98,64 @@ hold on
 plot([0 6], [0.5 0.5], 'k--');
 set(gca, 'FontName', 'Arial');
 
-
 sgTxt = [{'True Data vs RW Model Fits', 'Risk-Attitudes'}];
 sgtitle(sgTxt, 'FontWeight', 'Bold', 'FontName', 'Arial');
+
+figure(2);
+h1 = subplot(1, 2, 1);
+h2 = subplot(1, 2, 2);
+
+stimHighIdx = {[31 13], [41 14], [32 23], [42 24]};
+% 1: High-Safe|Low-Safe 
+% 2: High-Risky|Low-Safe
+% 3: High-Safe|Low-Risky
+% 4: High-Risky|Low-Risky
+% plot p(high) for the four unmatched conditions 
+% TRUE data 
+
+tmpData = cell2mat(dataIn.accTrue(1, :)');
+for istim = 1:4
+    
+    stimData = [];
+    stimData = tmpData([istim:4:end], :);
+    
+    meanTrue(istim, :) = nanmean(stimData);
+    semTrue(istim, :)  = nanstd(stimData)./sqrt(length(stimData));
+
+
+    axes(h1);
+    hold on
+    errorbar(meanTrue(istim, :), semTrue(istim, :), 'color', C(istim*10, :), 'linew', 1.5);
+end
+ylim([0.3 1]);
+xlim([0 6]);
+hold on 
+plot([0 6], [0.5 0.5], 'k--');
+xlabel('TrialBin');
+ylabel('P(High)');
+legend({'LLSafe-HHSafe', 'LLSafe-HHRisky', 'LLRisky-HHSafe', 'LLRisky-HHRisky', ''}, 'Location', 'NorthEast');
+CFit =  [colormap(cbrewer2('Greys', 40))];
+tmpData = cell2mat(dataIn.accFit(1, :)');
+for istim = 1:4
+    
+    stimData = [];
+    stimData = tmpData([istim:4:end], :);
+    
+    meanFit(istim, :) = nanmean(stimData);
+    semFit(istim, :)  = nanstd(stimData)./sqrt(length(stimData));
+
+
+    axes(h2);
+    hold on
+    errorbar(meanFit(istim, :), semFit(istim, :), 'color', CFit(istim*10, :), 'linew', 1.5);
+end
+ylim([0.3 1]);
+xlim([0 6]);
+hold on 
+plot([0 6], [0.5 0.5], 'k--');
+xlabel('TrialBin');
+ylabel('P(High)');
+legend({'LLSafe-HHSafe', 'LLSafe-HHRisky', 'LLRisky-HHSafe', 'LLRisky-HHRisky', ''}, 'Location', 'NorthEast');
+
+
 end
