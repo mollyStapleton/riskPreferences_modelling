@@ -11,22 +11,24 @@ end
 figure(1);
 clf;
 set(gcf, 'Position', [313 98.6000 1.2176e+03 663.4000]);
-h1 = axes('Position', [0.1 0.6 0.25 0.3]);
+
+h1 = axes('Position', [0.05 0.35 0.4 0.4]);
 axis square
-hold on
-histogram(paramFit.alpha, 10, 'FaceColor', col2plot{1});
-xlabel('Fitted \alpha');
-ylabel('Frequency');
-title('\fontsize{14} \alpha');
-set(gca, 'FontName', 'Arial');
-h2 = axes('Position', [0.1 0.2 0.25 0.3]);
-axis square
-hold on
-histogram(paramFit.beta, 10, 'FaceColor', col2plot{1});
-xlabel('Fitted \beta');
-ylabel('Frequency');
-title('\fontsize{14} \beta');
-set(gca, 'FontName', 'Arial');
+hold on 
+ba = boxchart([paramFit.alpha paramFit.beta], 'BoxFaceColor', col2plot{1});
+
+xlabel('Fitted Parameters');
+
+% title('\fontsize{14} \alpha');
+% set(gca, 'FontName', 'Arial');
+% h2 = axes('Position', [0.1 0.2 0.25 0.3]);
+% axis square
+% hold on
+% histogram(paramFit.beta, 10, 'FaceColor', col2plot{1});
+% xlabel('Fitted \beta');
+% ylabel('Frequency');
+% title('\fontsize{14} \beta');
+% set(gca, 'FontName', 'Arial');
 
 h3 = axes('Position', [0.3 0.35 0.4 0.4]);
 axis square
@@ -83,7 +85,7 @@ axes(h4);
 xlabel('Trial No.');
 ylabel('P(Risky)');
 title('Low-Low');
-ylim([0.3 0.7]);
+ylim([0 0.7]);
 xlim([0 6]);
 hold on 
 plot([0 6], [0.5 0.5], 'k--');
@@ -92,7 +94,7 @@ axes(h5);
 xlabel('Trial No.');
 ylabel('P(Risky)');
 title('High-High');
-ylim([0.3 0.7]);
+ylim([0 0.7]);
 xlim([0 6]);
 hold on 
 plot([0 6], [0.5 0.5], 'k--');
@@ -124,16 +126,23 @@ for istim = 1:4
 
 
     axes(h1);
+    axis square
     hold on
     errorbar(meanTrue(istim, :), semTrue(istim, :), 'color', C(istim*10, :), 'linew', 1.5);
 end
-ylim([0.3 1]);
+ylim([0.2 1]);
 xlim([0 6]);
 hold on 
 plot([0 6], [0.5 0.5], 'k--');
 xlabel('TrialBin');
 ylabel('P(High)');
-legend({'LLSafe-HHSafe', 'LLSafe-HHRisky', 'LLRisky-HHSafe', 'LLRisky-HHRisky', ''}, 'Location', 'NorthEast');
+if strcmpi(dist, 'Gaussian')
+    legend({'LLSafe-HHRisky', 'LLSafe-HHSafe', 'LLRisky-HHSafe', 'LLRisky-HHRisky', ''}, 'Location', 'SouthEast');
+else 
+    legend({'LLSafe-HHRisky', 'LLSafe-HHSafe', 'LLRisky-HHSafe', 'LLRisky-HHRisky', ''}, 'Location', 'NorthEast');
+end
+title('Accuracy: TRUE');
+set(gca, 'FontName', 'Arial');
 CFit =  [colormap(cbrewer2('Greys', 40))];
 tmpData = cell2mat(dataIn.accFit(1, :)');
 for istim = 1:4
@@ -146,16 +155,17 @@ for istim = 1:4
 
 
     axes(h2);
+    axis square
     hold on
     errorbar(meanFit(istim, :), semFit(istim, :), 'color', CFit(istim*10, :), 'linew', 1.5);
 end
-ylim([0.3 1]);
+ylim([0.2 1]);
 xlim([0 6]);
 hold on 
 plot([0 6], [0.5 0.5], 'k--');
 xlabel('TrialBin');
 ylabel('P(High)');
-legend({'LLSafe-HHSafe', 'LLSafe-HHRisky', 'LLRisky-HHSafe', 'LLRisky-HHRisky', ''}, 'Location', 'NorthEast');
-
-
+legend({'LLSafe-HHRisky', 'LLSafe-HHSafe', 'LLRisky-HHSafe', 'LLRisky-HHRisky', ''}, 'Location', 'NorthEast');
+title('Accuracy: FIT');
+set(gca, 'FontName', 'Arial');
 end

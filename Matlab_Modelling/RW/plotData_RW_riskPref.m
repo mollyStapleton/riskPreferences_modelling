@@ -83,6 +83,7 @@ function [meanTrue, meanFit, binnedTrue, binnedFit, accTrue, accFit] = plotFit_R
     % return p(High) for all 4 of the unmatched conditions 
     % 3 and 4 are the high stimuli
     stimHighIdx = {[41 14], [31 13], [32 23], [42 24]};
+
     for istim = 1:4
         tmp = [];
 

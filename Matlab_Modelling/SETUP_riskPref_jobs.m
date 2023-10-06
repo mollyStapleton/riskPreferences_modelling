@@ -19,14 +19,14 @@ cd([base_path repo_path]);
 %--------------------------------------------------------------
 models                  = {'RW', 'RATES', 'UCB_nCount', 'UCB_spread', 'PEIRS'};
 models2run              = [1];
-nIters                  = 100;
+nIters                  = 1000;
 
 %------------------------------------------------------------
 % SET REWARD DISTRIBUTION
 %-----------------------------------------------------------------
 distSplit   = 1; % whether to collapse all distributions or perform jobs separately
 dists       = {'Gaussian', 'Bimodal'};
-dists2run   = [1];
+dists2run   = [2];
 %-------------------------------------------------------------
 % SELECT JOB TO RUN
 %-------------------------------------------------------------------
@@ -115,7 +115,7 @@ if simulate_model_effects
         % PREDICTIONS 
         %----------------------------------------------------------------
         params.Q0               = 50; % FIXED PARAMETER, DO NOT CHANGE
-        params.beta             = linspace(0.01, 1, 10); %softmax temperature parameter included in all models
+        params.beta             = linspace(0.1, 0.5, 10); %softmax temperature parameter included in all models
         if strcmpi(models{models2run(imodel)} , 'RW')
             params.alpha        = linspace(0.1, 1, 20);
         elseif strcmpi(models{models2run(imodel)} , 'RATES')
@@ -132,9 +132,15 @@ if simulate_model_effects
         end
 
             clf;
-            parPredict_riskPref(models{models2run(imodel)}, params, dists, nIters);
+            parPredict_riskPref(models{models2run(imodel)}, params, dists(dists2run), nIters);
             saveFigname = [models{models2run(imodel)} '_paramPredictions'];
             cd([base_path save_path '\parameter_simulations']);
+            figure(1);
+            print(saveFigname, '-dsvg');
+            print(saveFigname, '-dpng');
+
+            figure(2);
+            saveFigname = ['accuracy_' models{models2run(imodel)} '_' dists{dists2run} '_paramPredictions_lowerBeta'];
             print(saveFigname, '-dsvg');
             print(saveFigname, '-dpng');
     end
@@ -252,7 +258,7 @@ if plot_model_fit
             figSavename_2 = [models{models2run} '_' dists{dists2run} '_modelFit_accuracy'];
             figure(2);
             gcf;
-            set(gcf, 'Position', [488 171.4000 779.4000 590.6000]);
+            set(gcf, 'Position', [239.4000 1.8000 982.4000 780.8000]);
             print(figSavename_2, '-dpng');
 
         end

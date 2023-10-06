@@ -11,21 +11,15 @@ end
 figure(1);
 clf;
 set(gcf, 'Position', [313 98.6000 1.2176e+03 663.4000]);
-h1 = axes('Position', [0.1 0.6 0.25 0.3]);
+
+h1 = axes('Position', [0.05 0.35 0.4 0.4]);
 axis square
-hold on
-histogram(paramFit.alpha, 10, 'FaceColor', col2plot{1});
-xlabel('Fitted \alpha');
-ylabel('Frequency');
-title('\fontsize{14} \alpha');
-set(gca, 'FontName', 'Arial');
-h2 = axes('Position', [0.1 0.2 0.25 0.3]);
-axis square
-hold on
-histogram(paramFit.beta, 10, 'FaceColor', col2plot{1});
-xlabel('Fitted \beta');
-ylabel('Frequency');
-title('\fontsize{14} \beta');
+hold on 
+ba = boxchart([paramFit.alpha paramFit.beta], 'BoxFaceColor', col2plot{1});
+
+ylabel('Fitted Parameter Values');
+set(gca, 'XTickLabel', {'\alpha', '\beta'})
+title('Descriptives');
 set(gca, 'FontName', 'Arial');
 
 h3 = axes('Position', [0.3 0.35 0.4 0.4]);
@@ -134,7 +128,11 @@ hold on
 plot([0 6], [0.5 0.5], 'k--');
 xlabel('TrialBin');
 ylabel('P(High)');
-legend({'LLSafe-HHRisky', 'LLSafe-HHSafe', 'LLRisky-HHSafe', 'LLRisky-HHRisky', ''}, 'Location', 'SouthEast');
+if strcmpi(dist, 'Gaussian')
+    legend({'LLSafe-HHRisky', 'LLSafe-HHSafe', 'LLRisky-HHSafe', 'LLRisky-HHRisky', ''}, 'Location', 'SouthEast');
+else 
+    legend({'LLSafe-HHRisky', 'LLSafe-HHSafe', 'LLRisky-HHSafe', 'LLRisky-HHRisky', ''}, 'Location', 'NorthEast');
+end
 title('Accuracy: TRUE');
 set(gca, 'FontName', 'Arial');
 CFit =  [colormap(cbrewer2('Greys', 40))];

@@ -1,9 +1,13 @@
-function [Qall, choiceType, totalStim] = sim_RW_riskPref(params, dist, nIters)
+function [Qall, choiceType, totalStim, meanAcc] = sim_RW_riskPref(params, dist, nIters)
 
     choiceType   = NaN(nIters, 120);
+    choiceHigh   = NaN(nIters, 120);
     totalStim_L  = NaN(nIters, 120);
     totalStim_R  = NaN(nIters, 120);
     p            = NaN(nIters, 120);
+
+    % data for accuracy 
+    stimChosen   = NaN(nIters, 120);
 
     if strcmpi(dist, 'Gaussian')
         dist = 1;
@@ -41,7 +45,8 @@ function [Qall, choiceType, totalStim] = sim_RW_riskPref(params, dist, nIters)
                 stimIdx = stimR;
                 stimCount(stimIdx) = stimCount(stimIdx) +1;
             end
-    
+            
+            stimChosen(i, t) = stimIdx;
             % only stores relevant choice data for those matched-mean trials,
             % which we use for risk preference calculations
             if (stimuli(i, t) == 12 || stimuli(i, t)  == 21 ||...
@@ -58,6 +63,10 @@ function [Qall, choiceType, totalStim] = sim_RW_riskPref(params, dist, nIters)
                 totalStim_L(i, t) = stimL;
                 totalStim_R(i, t) = stimR;
     
+            else 
+                if stimIdx == 3 || stimIdx == 4
+                    choiceHigh(i, t) = 1;
+                end
             end
     
             % updating of stimulus specific Qt according to delta rule
@@ -77,5 +86,24 @@ function [Qall, choiceType, totalStim] = sim_RW_riskPref(params, dist, nIters)
     %total times RISKY stimuli shown in matched-mean conditions 
     totalStim{1} = (sum(totalStim_L == 2) + sum(totalStim_R == 2));
     totalStim{2} = (sum(totalStim_L == 4) + sum(totalStim_R == 4));
+
+    % PROP ACCURATE
+    stimHighIdx = [14 41; 13 31; 23 32; 24 42];
+    
+    for t = 1:120
+        for istim = 1:4
+            highTotal = 0;
+            comboTotal = 0;
+            for icmb = 1:2
+                tmpIdx = [];
+                tmpIdx = stimuli(:, t) == stimHighIdx(istim, icmb);
+                highTotal = highTotal + sum(choiceHigh(tmpIdx, t) ==1);
+                comboTotal = comboTotal + sum(tmpIdx == 1);
+            end
+            acc(istim, t) = highTotal./comboTotal;
+        end
+    end
+
+    meanAcc = mean(acc')';
 
 end
