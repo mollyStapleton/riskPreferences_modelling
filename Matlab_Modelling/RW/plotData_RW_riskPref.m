@@ -116,4 +116,9 @@ function [meanTrue, meanFit, binnedTrue, binnedFit, accTrue, accFit] = plotFit_R
     
     end 
 
+    plotSubjectFit_RW(binnedTrue, binnedFit, accTrue, accFit, dist);
+    
+    sgText = {['SubjectIdx: ' num2str(paramFit.ptIdx) ', \alpha = '  num2str(paramFit.alpha, '%.4f') ', \beta = ' num2str(paramFit.beta, '%.4f')],...
+       [ ' LL = ' num2str(paramFit.LL, '%.2f'), ', BIC = ' num2str(paramFit.BIC, '%.2f')]};
+    sgtitle(sgText, 'FontName', 'Arial', 'FontSize', 12)
 end

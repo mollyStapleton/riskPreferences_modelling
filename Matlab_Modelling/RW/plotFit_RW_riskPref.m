@@ -160,4 +160,11 @@ ylabel('P(High)');
 legend({'LLSafe-HHRisky', 'LLSafe-HHSafe', 'LLRisky-HHSafe', 'LLRisky-HHRisky', ''}, 'Location', 'NorthEast');
 title('Accuracy: FIT');
 set(gca, 'FontName', 'Arial');
+
+figure(3);
+params.Q0    = [50 50 50 50];
+params.alpha = nanmean(paramFit.alpha);
+params.beta  = nanmean(paramFit.beta);
+[Qall, choiceType, totalStim, meanAcc_sim] = sim_RW_riskPref(params, dist, 1000)
+
 end

@@ -53,9 +53,9 @@ if simulate_data
         % script
         %----------------------------------------------------------------
         params.Q0               = 50; % FIXED PARAMETER, DO NOT CHANGE
-        params.beta             = 0.06; %softmax temperature parameter included in all models
+        params.beta             = 0.3; %softmax temperature parameter included in all models
         if strcmpi(models{models2run(imodel)} , 'RW')
-            params.alpha        = 0.86;
+            params.alpha        = 0.2;
         elseif strcmpi(models{models2run(imodel)} , 'RATES')
             params.alpha_pos    = 0.86;
             params.alpha_neg    = 0.48;
@@ -115,7 +115,7 @@ if simulate_model_effects
         % PREDICTIONS 
         %----------------------------------------------------------------
         params.Q0               = 50; % FIXED PARAMETER, DO NOT CHANGE
-        params.beta             = linspace(0.1, 0.5, 10); %softmax temperature parameter included in all models
+        params.beta             = linspace(0.1, 0., 10); %softmax temperature parameter included in all models
         if strcmpi(models{models2run(imodel)} , 'RW')
             params.alpha        = linspace(0.1, 1, 20);
         elseif strcmpi(models{models2run(imodel)} , 'RATES')
@@ -223,7 +223,7 @@ if plot_model_fit
         load([models{models2run} '_subjectLvl_paramFits_240_' dists{dists2run} '.mat'])
         %load in previously generated parameter fits
         dataFilename = ['dataPlot_truevsfit_' models{models2run} '_' dists{dists2run} '.mat'];
-        if ~exist(dataFilename)
+        if exist(dataFilename)
             for isubject = 1: length(subs)
     
                 trueData   = allTr_allSubjects([allTr_allSubjects.pt_number == subs(isubject)], :);
@@ -233,7 +233,9 @@ if plot_model_fit
                     meanAccTrue{isubject}, meanAccFit{isubject}]...
                     = plotData_riskPref(trueData, paramFit, models{models2run}, dists{dists2run});
                 
-
+                cd([base_path save_path '\model_fits\' models{models2run} '\subjectSpecific\' dists{dists2run}]);
+                saveFigname = ['PT_' num2str(subs(isubject))];
+                print(saveFigname, '-dpng');
             end
 
             % save risk preference data: TRUE and FITTED
