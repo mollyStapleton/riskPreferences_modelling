@@ -40,7 +40,7 @@ end
     % @(x) defines the input of the function
     % function inputs (dataIn, alpha, beta)
 
-    obFunc = @(x) LL_RW_riskPref(dataIn, x(1), x(2));
+    obFunc = @(x) LL_RW_riskPref_MT(dataIn, x(1), x(2));
     LB = [0 0];
     UB = [1 1];
     % return set of parameters to be fit (alpha and beta for RW model)

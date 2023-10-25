@@ -101,8 +101,8 @@ for istim = 1:4
 
 end
 set(gca, 'XTick', [0.5:0.5:5.5]);
-set(gca, 'XTickLabel', {'\bfTrue', '\bfFit', '', '\bfTrue', '\bfFit', '',...
-    '\bfTrue', '\bfFit', '', '\bfTrue', '\bfFit', ''});
+set(gca, 'XTickLabel', {'\bfTrue', 'Fit', '', 'True', 'Fit', '',...
+    'True', 'Fit', '', 'True', 'Fit', ''});
 set(gca, 'XTickLabelRotation', 45);
 ylabel('P(High|Both-Different)');
 title('\fontsize{14} \bf Accuracy')
@@ -110,8 +110,7 @@ hold on
 
 xlim([-0.5 6.5])
 plot([-0.5 6.5], [0.5 0.5], 'k--');
-legend({'HHSafe-LLSafe', '', 'HHSafe-LLRisky', '', 'HHRisky-LLSafe', '', 'HHRisky-LLRisky', '', ''},...
-    'Location', 'northwest')
+legend({'HHSafe-LLSafe', '', 'HHSafe-LLRisky', '', 'HHRisky-LLSafe', '', 'HHRisky-LLRisky', '', ''}')
 set(gca, 'FontName', 'Arial');
 set(gca, 'FontSize', 8);
 
@@ -143,7 +142,6 @@ plot([0 6], [0.5 0.5], 'k--');
 % end
 ylabel('P(High|Both-Different)');
 xlabel('TrialBins');
-title('\fontsize{12} \bf True Data');
 set(gca, 'FontName', 'Arial');
 
 h7 = axes('Position', [0.63 0.05 0.4 0.4]);
@@ -162,7 +160,6 @@ end
 ylabel('P(High|Both-Different)');
 xlabel('TrialBins');
 set(gca, 'FontName', 'Arial');
-title('\fontsize{12} \bf Model Fit');
 set(gca, 'FontSize', 8);
 ylim([0 1]);
 hold on

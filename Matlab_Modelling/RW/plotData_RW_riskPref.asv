@@ -76,8 +76,8 @@ end
 %----------------------------------------------------------------------------------
 %%% OVERALL
 %------------------------------------------------------------------------------
-stimHighIdx = {[31 13] [32 23] [41 14] [42 24]};
-% HH-Safe:LL-Safe HH-Safe:LL-Risky, HH-Risky:LL-Safe, HH-Risky:LL-Risky
+stimHighIdx = {[41 14], [31 13], [32 23], [42 24]};
+% HH-Risky:LL-Safe, HH-Safe:LL-Safe, HH-Safe:LL-Risky, HH-Risky:LL-Risky
 for istim = 1:4
     tmp = [];
     fullIdx = [];
@@ -92,11 +92,11 @@ for istim = 1:4
         fullIdx = [fullIdx; stimIdx];
     end
     accFit(istim) = mean(tmp);
-    accTrue(istim) = sum(data2use.choice_high(fullIdx)==1)./length(fullIdx);
+    accTrue(istim) = sum(data2use.choice_high(fullIdx)==1)./length(fullIdx)
 end
-%----------------------------------------------------------------------------------
-%%% TRIAL BINNED
-%------------------------------------------------------------------------------
+
+
+
 for istim = 1:4
     tmp = [];
 
@@ -111,29 +111,20 @@ for istim = 1:4
             stimIdx = [];
             stimIdx = trIdx(data2use.stimComboIdx(trIdx) == stimHighIdx{istim}(icmb));
             if icmb == 1
-                tmp = [tmp; data2use.choiceProb_mdlFit(stimIdx)];
+                tmp = [tmp; data2use.choiceProb(stimIdx)];
             else
-                tmp = [tmp; 1- data2use.choiceProb_mdlFit(stimIdx)];
+                tmp = [tmp; 1- data2use.choiceProb(stimIdx)];
             end
 
             fullIdx = [fullIdx; stimIdx];
 
         end
-        accFit_binned(istim, ibin) = mean(tmp);
-        accTrue_binned(istim, ibin) =  sum(data2use.choice_high(fullIdx) == 1)./length(fullIdx);
+        accFit(istim, ibin) = mean(tmp);
+        accTrue(istim, ibin) =  sum(data2use.choice_high(fullIdx) == 1)./length(fullIdx);
     end
 end
 
-data2plot.meanTrue          = meanTrue;
-data2plot.meanFit           = meanFit;
-data2plot.binnedTrue        = binnedTrue;
-data2plot.binnedFit         = binnedFit;
-data2plot.accFit            = accFit;
-data2plot.accTrue           = accTrue;
-data2plot.accFit_binned     = accFit_binned;
-data2plot.accTrue_binned    = accTrue_binned;
-
-plotSubjectFit_RW(data2plot, dist);
+plotSubjectFit_RW(binnedTrue, binnedFit, accTrue, accFit, dist);
 
 sgText = {['SubjectIdx: ' num2str(paramFit.ptIdx) ', \alpha = '  num2str(paramFit.alpha, '%.4f') ', \beta = ' num2str(paramFit.beta, '%.4f')],...
     [ ' LL = ' num2str(paramFit.LL, '%.2f'), ', BIC = ' num2str(paramFit.BIC, '%.2f')]};
