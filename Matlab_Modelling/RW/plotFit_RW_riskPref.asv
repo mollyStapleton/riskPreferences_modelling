@@ -86,7 +86,7 @@ for icnd = 1:2
         hold on
     else
         axes(h5);
-        h = gca;
+                h = gca;
         h.YAxis.Visible = 'off';
         hold on
     end
@@ -123,6 +123,7 @@ set(gca, 'FontName', 'Arial');
 %------------------------------------------------------------------------------
 h6 = axes('Position', [0.64 0.55 0.33 0.4]);
 trueCol = C([10 20 30 40], :);
+fitCol  = CFit([10 20 30 40], :);
 trueX   = [0.5 2 3.5 5];
 fitX    = [1 2.5 4 5.5];
 
@@ -130,10 +131,12 @@ for istim = 1:4
     for itype = 1:2
         if itype == 1
             meanData = dataIn.accTrue(:, istim);
+            colPlot  = trueCol;
             colFil   = trueCol;
             x2plot = trueX;
         else
             meanData = dataIn.accFit(:, istim);
+            colPlot  = fitCol;
             colFil   = [1 1 1; 1 1 1; 1 1 1; 1 1 1];
             x2plot = fitX;
         end
@@ -142,7 +145,7 @@ for istim = 1:4
         sem2plot(itype, istim)  = nanstd(meanData)./sqrt(length(meanData));
         hold on
         [hb, hberr] = barwitherr(sem2plot(itype, istim), mean2plot(itype, istim), 'FaceColor',...
-            colFil(istim, :), 'EdgeColor', trueCol(istim, :), 'BarWidth', 0.5);
+            colFil(istim, :), 'EdgeColor', colPlot(istim, :), 'BarWidth', 0.5);
         hb.XData = x2plot(istim);
         hberr.XData = x2plot(istim);
         hb.BarWidth = 0.4;
@@ -182,8 +185,6 @@ for istim = 1:4
     axis square
     hold on
     errorbar(meanTrue(istim, :), semTrue(istim, :), 'color', C(istim*10, :), 'linew', 1.5);
-    plot([1:5], meanTrue(istim, :), 'o', 'MarkerEdgeColor',...
-        C(istim*10, :), 'MarkerFaceColor', C(istim*10, :), 'linew', 1.2);
 end
 ylim([0.2 1]);
 xlim([0 6]);
@@ -191,7 +192,6 @@ hold on
 plot([0 6], [0.5 0.5], 'k--');
 xlabel('TrialBin');
 ylabel('P(High)');
-title('\fontsize{10} \bfTrue Data');
 set(gca, 'FontName', 'Arial');
 
 h8 = axes('Position', [0.82 0.06 0.15 0.4]); 
@@ -206,9 +206,7 @@ for istim = 1:4
     semFit(istim, :)  = nanstd(stimData)./sqrt(length(stimData));
     axis square
     hold on
-    errorbar(meanFit(istim, :), semFit(istim, :), 'color', C(istim*10, :), 'linew', 1.5);
-    plot([1:5], meanFit(istim, :), 'o', 'MarkerEdgeColor',...
-        C(istim*10, :), 'MarkerFaceColor', [1 1 1], 'linew', 1.2);
+    errorbar(meanFit(istim, :), semFit(istim, :), 'color', CFit(istim*10, :), 'linew', 1.5);
 end
 ylim([0.2 1]);
 xlim([0 6]);
@@ -216,8 +214,12 @@ hold on
 plot([0 6], [0.5 0.5], 'k--');
 xlabel('TrialBin');
 ylabel('P(High)');
-title('\fontsize{10} \bfModel Fit');
 set(gca, 'FontName', 'Arial');
 
+figure(3);
+params.Q0    = [50 50 50 50];
+params.alpha = nanmean(paramFit.alpha);
+params.beta  = nanmean(paramFit.beta);
+[Qall, choiceType, totalStim, meanAcc_sim] = sim_RW_riskPref(params, dist, 1000)
 
 end

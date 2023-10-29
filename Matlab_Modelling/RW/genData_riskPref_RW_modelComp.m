@@ -1,4 +1,5 @@
-function [meanTrue, meanFit, binnedTrue, binnedFit, accTrue, accFit] = plotFit_RW_riskPref(dataIn, paramFit, dist)
+function [meanTrue, meanFit, binnedTrue, binnedFit, accTrue, accFit,...
+    accTrue_binned, accFit_binned] = genData_riskPref_RW_modelComp(dataIn, paramFit, dist)
 
 if strcmp(dist, 'Gaussian')
     col2plot = {[0.83 0.71 0.98], [0.62 0.35 0.99]};
