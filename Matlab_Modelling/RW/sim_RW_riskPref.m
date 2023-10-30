@@ -88,8 +88,8 @@ function [Qall, choiceType, totalStim, meanAcc] = sim_RW_riskPref(params, dist, 
     totalStim{2} = (sum(totalStim_L == 4) + sum(totalStim_R == 4));
 
     % PROP ACCURATE
-    stimHighIdx = [14 41; 13 31; 23 32; 24 42];
-    
+    stimHighIdx = [31 13; 32 23; 41 14; 42 24];
+    % HH-Safe:LL-Safe HH-Safe:LL-Risky, HH-Risky:LL-Safe, HH-Risky:LL-Risky
     for t = 1:120
         for istim = 1:4
             highTotal = 0;
@@ -97,7 +97,7 @@ function [Qall, choiceType, totalStim, meanAcc] = sim_RW_riskPref(params, dist, 
             for icmb = 1:2
                 tmpIdx = [];
                 tmpIdx = stimuli(:, t) == stimHighIdx(istim, icmb);
-                highTotal = highTotal + sum(choiceHigh(tmpIdx, t) ==1);
+                highTotal = highTotal + sum(choiceHigh(tmpIdx, t) == 1);
                 comboTotal = comboTotal + sum(tmpIdx == 1);
             end
             acc(istim, t) = highTotal./comboTotal;

@@ -1,45 +1,54 @@
-function [NegLL,choiceProb, choice_dir, Qs] = LL_RW_riskPref(dataIn, a, b)
+function [NegLL,choiceProb, choice_dir, Qs] = LL_RW_riskPref(dataIn_all, a, b)
 
-nTrials      = size(dataIn, 1);
-Qt           = [50 50 50 50]*0+50;
-choice_dir   = zeros(1, nTrials);
-choiceProb   = NaN(1, nTrials);
-Qs           = NaN(4, nTrials);
+blockNums = unique(dataIn_all.blockNumber);
 
-for t = 1: nTrials
- 
-    stimL = dataIn.stim_l(t);
-    stimR = dataIn.stim_r(t);
-
-    % softmax to determine prob.of choice
-    p(t)     = exp(b * Qt(stimL))./(exp(b*Qt(stimL)) + exp(b*Qt(stimR)));
+for iblock = 1:length(blockNums)
     
-    % choice made by subject
-    stimIdx(t)  = dataIn.stimulus_choice(t);
+    dataIn               = [];
+    dataIn               = dataIn_all(dataIn_all.blockNumber == blockNums(iblock), :);
+    nTrials              = size(dataIn, 1);
+    Qt                   = [50 50 50 50]*0+50;
+    choice_dir           = zeros(1, nTrials);
+    choiceProb(iblock, :)   = NaN(1, nTrials);
+    Qs                   = NaN(4, nTrials);
 
-    % binary vector of 0 1 to indicate choice made to left target 
-    if stimL == stimIdx(t);
-        choice_dir(t) = 1;
-    else
-        p(t)=1-p(t);
+    for t = 1: nTrials
+    
+        stimL = dataIn.stim_l(t);
+        stimR = dataIn.stim_r(t);
+    
+        % softmax to determine prob.of choice
+        p(t)     = exp(b * Qt(stimL))./(exp(b*Qt(stimL)) + exp(b*Qt(stimR)));
+    
+        % choice made by subject
+        stimIdx(t)  = dataIn.stimulus_choice(t);
+    
+        % binary vector of 0 1 to indicate choice made to left target
+        if stimL == stimIdx(t);
+            choice_dir(t) = 1;
+        else % p(right)
+            p(t)=1-p(t);
+        end
+    
+        % probability of choosing left target
+        choiceProb(iblock, t) = p(t);
+    
+        % updating of stimulus specific Qt according to delta rule
+        if ((stimIdx(t)))~=0
+            delta = dataIn.reward_obtained(t) - Qt(stimIdx(t));
+            Qt(stimIdx(t)) =  Qt(stimIdx(t)) + (a*delta);
+            Qt=max(0,Qt);
+            Qs(stimIdx(t), t) = Qt(stimIdx(t));
+        end
+        %[stimL stimR dataIn.stimulus_choice(t) dataIn.reward_obtained(t) Qt p(t)]
     end
 
-    % probability of choosing left target 
-    choiceProb(t) = p(t);
-
-    % updating of stimulus specific Qt according to delta rule
-if ((stimIdx(t)))~=0
-    delta = dataIn.reward_obtained(t) - Qt(stimIdx(t));
-    Qt(stimIdx(t)) =  Qt(stimIdx(t)) + (a*delta);
-    Qt=max(0,Qt);
-    Qs(stimIdx(t), t) = Qt(stimIdx(t));
-end
-%[stimL stimR dataIn.stimulus_choice(t) dataIn.reward_obtained(t) Qt p(t)]
-end
     %choiceProb(choice_dir==0)=1-choiceProb(choice_dir==0);
-    choiceProb=0.99*choiceProb+0.005;
-    choiceProb_LL = choiceProb(~isnan(choiceProb));
+    choiceProb(iblock, :)=0.99*choiceProb(iblock, :)+0.005;
+    choiceProb_LL(iblock, :) = choiceProb(iblock, ~isnan(choiceProb(iblock, :)));
     % compute negative log-likelihood
-    NegLL = -sum(log(choiceProb_LL));
+    NegLL(iblock) = -sum(log(choiceProb_LL(iblock, :)));
 
 end
+
+NegLL = sum(NegLL);

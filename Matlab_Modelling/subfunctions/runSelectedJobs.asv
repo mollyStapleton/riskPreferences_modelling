@@ -64,7 +64,7 @@ if model_fit_to_data
 
     data2save = array2table(data2save);
     data2save.Properties.VariableNames = {'ptIdx', 'alpha', 'beta', 'LL', 'BIC'};
-    saveTablename = [models{models2run} '_subjectLvl_paramFits_NEW_' dists{dists2run} '.mat'];
+    saveTablename = [models{models2run} '_subjectLvl_paramFits_NEW' dists{dists2run} '.mat'];
     cd([base_path save_path '\model_fits\' models{models2run}]);
     save( saveTablename, 'data2save');
     delete(gcp('nocreate'));
@@ -79,10 +79,10 @@ if genData_plotFit
     cd([base_path data_path]);
     load('allTr_allSubjects.mat');
     cd([base_path save_path '\model_fits\' models{models2run}]);
-    load([models{models2run} '_subjectLvl_paramFits_NEW_' dists{dists2run} '.mat'])
+    load([models{models2run} '_subjectLvl_paramFits_' dists{dists2run} '.mat'])
     %load in previously generated parameter fits
     dataFilename = ['dataPlot_truevsfit_' models{models2run} '_' dists{dists2run} '.mat'];
-    if exist(dataFilename)
+    if ~exist(dataFilename)
         for isubject = 1: length(subs)
 
             trueData   = allTr_allSubjects([allTr_allSubjects.pt_number == subs(isubject)], :);

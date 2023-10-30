@@ -1,4 +1,4 @@
-function [best_fit_parm, LL, BIC] = mdlFit_RW_riskPref(dataIn, params, dist, distSplit, nIters)
+function [best_fit_parm, LL, BIC] = mdlFit_RW_riskPref(dataIn_all, params, dist, distSplit, nIters)
 
 %-------------------------------------------------------------------
 %%% RW model fit to risk preferences 
@@ -30,8 +30,8 @@ if distSplit
         distType = 2;
     end
 
-    distIdx = find(dataIn.distType == distType);
-    dataIn  = dataIn(distIdx, :);
+    distIdx = find(dataIn_all.distType == distType);
+    dataIn_all  = dataIn_all(distIdx, :);
 end 
 
     % objective function uses real data to fit using parameters alpha and beta
@@ -40,7 +40,7 @@ end
     % @(x) defines the input of the function
     % function inputs (dataIn, alpha, beta)
 
-    obFunc = @(x) LL_RW_riskPref(dataIn, x(1), x(2));
+    obFunc = @(x) LL_RW_riskPref(dataIn_all, x(1), x(2));
     LB = [0 0];
     UB = [1 1];
     % return set of parameters to be fit (alpha and beta for RW model)
@@ -63,6 +63,6 @@ end
     NegLL = NegLL_grid(best);
 
     LL = -NegLL;
-    BIC = length(X0(1,:)) * log(size(dataIn, 1)) + 2*NegLL;
+    BIC = length(X0(1,:)) * log(size(dataIn_all, 1)) + 2*NegLL;
 
 end

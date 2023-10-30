@@ -1,8 +1,8 @@
-function plotSubjectFit_RW(dataIn, dist)
+function plotSubjectFit_RW(dataIn, paramFit, dist)
 
 % PLOT OF TRUE VS FIT: SINGLE SUBJECT
 figure(1);
-set(gcf, 'Position', [452.2000 77.8000 996.8000 648]);
+set(gcf, 'Position', [268.2000 69 1.2288e+03 648]);
 if strcmp(dist, 'Gaussian')
     col2plot = {[0.83 0.71 0.98], [0.62 0.35 0.99]};
     C = [colormap(cbrewer2('BuPu', 40))];
@@ -86,7 +86,7 @@ set(gca, 'FontName', 'Arial');
 %--------------------------------------------------------------------------
 %%% PLOT P(HIGH) OVERALL: FIT VS TRUE
 %------------------------------------------------------------------------------
-h5 = axes('Position', [0.45 0.55 0.5 0.4]);
+h5 = axes('Position', [0.40 0.55 0.5 0.4]);
 trueCol = C([10 20 30 40], :);
 fitCol  = CFit([10 20 30 40], :);
 trueX   = [0.5 2 3.5 5];
@@ -119,7 +119,7 @@ set(gca, 'FontSize', 8);
 %%% PLOT P(HIGH) TRIAL BINNED: FIT VS TRUE
 %------------------------------------------------------------------------------
 
-h6 = axes('Position', [0.35 0.05 0.4 0.4]);
+h6 = axes('Position', [0.3 0.05 0.4 0.4]);
 axis square
 for istim = 1:4
     
@@ -146,7 +146,7 @@ xlabel('TrialBins');
 title('\fontsize{12} \bf True Data');
 set(gca, 'FontName', 'Arial');
 
-h7 = axes('Position', [0.63 0.05 0.4 0.4]);
+h7 = axes('Position', [0.53 0.05 0.4 0.4]);
 axis square
 h = gca;
 h.YAxis.Visible = 'off';
@@ -170,7 +170,12 @@ xlim([0 6]);
 set(gca, 'XTick', [1:5]);
 plot([0 6], [0.5 0.5], 'k--');
 
-
+h8 = axes('Position', [0.87 0.05 0.1 0.4]);
+axis square
+txtPlot = {['SubjectIdx: ' num2str(paramFit.ptIdx) ], ['\alpha = '  num2str(paramFit.alpha, '%.4f')], ['\beta = ' num2str(paramFit.beta, '%.4f')],...
+    ['LL = ' num2str(paramFit.LL, '%.2f')], ['BIC = ' num2str(paramFit.BIC, '%.2f')]};
+text(0, 0.55, txtPlot, 'FontSize', 12, 'FontName', 'Arial');
+set(gca, 'Visible', 'off')
 end
 
 
