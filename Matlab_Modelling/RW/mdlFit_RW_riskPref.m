@@ -17,7 +17,8 @@ else
 end
 if Nwork ~= 4
   delete(gcp('nocreate'))
-  parpool('local', 4, 'IdleTimeout', 30);
+%   parpool('local', 4, 'IdleTimeout', 30);
+  parpool('local', 4);
 end
 
 
@@ -42,7 +43,7 @@ end
 
     obFunc = @(x) LL_RW_riskPref(dataIn_all, x(1), x(2));
     LB = [0 0];
-    UB = [1 1];
+    UB = [1 3];
     % return set of parameters to be fit (alpha and beta for RW model)
     for iter = 1:nIters
         X0(iter,:) = [params.alpha(iter) params.beta(iter)];
@@ -51,12 +52,12 @@ end
     % setting for optimization function
     feval = [50000, 50000]; % max number of function evaluations and iterations
     options = optimset('MaxFunEvals',feval(1),'MaxIter',feval(2),'Display','none');
-    
-        for iter = 1:nIters
-            %     parfor iter = 1:Nfit
-%              [Xfit_grid(iter,:), NegLL_grid(iter)] = fminsearchbnd(obFunc, X0(iter,:), LB, UB, options);
-            [Xfit_grid(iter,:), NegLL_grid(iter,1)] = fmincon(obFunc,X0(iter,:),[],[],[],[],LB,UB,[],options);
-        end
+
+    for iter = 1:nIters
+        %     parfor iter = 1:nIters
+%         [Xfit_grid(iter,:), NegLL_grid(iter)] = fminsearchbnd(obFunc, X0(iter,:), LB, UB, options);
+        [Xfit_grid(iter,:), NegLL_grid(iter, 1)] = fmincon(obFunc,X0(iter,:),[],[],[],[],LB,UB,[],options);
+    end
 
     [~,best] = min(NegLL_grid);
     best_fit_parm = Xfit_grid(best,:);

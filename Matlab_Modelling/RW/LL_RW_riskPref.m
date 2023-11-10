@@ -4,13 +4,14 @@ blockNums = unique(dataIn_all.blockNumber);
 
 for iblock = 1:length(blockNums)
     
-    dataIn               = [];
-    dataIn               = dataIn_all(dataIn_all.blockNumber == blockNums(iblock), :);
-    nTrials              = size(dataIn, 1);
-    Qt                   = [50 50 50 50]*0+50;
-    choice_dir           = zeros(1, nTrials);
+    dataIn                  = [];
+    dataIn                  = dataIn_all(dataIn_all.blockNumber == blockNums(iblock), :);
+    nTrials                 = size(dataIn, 1);
+    Qt                      = [50 50 50 50]*0+50;
+    choice_dir              = zeros(1, nTrials);
     choiceProb(iblock, :)   = NaN(1, nTrials);
-    Qs                   = NaN(4, nTrials);
+    choiceProb_LL(iblock, :)= NaN(1, nTrials);
+    Qs                      = NaN(4, nTrials);
 
     for t = 1: nTrials
     
@@ -45,7 +46,7 @@ for iblock = 1:length(blockNums)
 
     %choiceProb(choice_dir==0)=1-choiceProb(choice_dir==0);
     choiceProb(iblock, :)=0.99*choiceProb(iblock, :)+0.005;
-    choiceProb_LL(iblock, :) = choiceProb(iblock, ~isnan(choiceProb(iblock, :)));
+    choiceProb_LL(iblock, ~isnan(choiceProb(iblock, :))) = choiceProb(iblock, ~isnan(choiceProb(iblock, :)));
     % compute negative log-likelihood
     NegLL(iblock) = -sum(log(choiceProb_LL(iblock, :)));
 

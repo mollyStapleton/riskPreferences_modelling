@@ -11,10 +11,15 @@ function plot_riskPref(choiceType, totalStim, Qall, Sall, model, dist, params)
     if isempty(Sall)
 
         figure(1);
-        h1 = subplot(1, 3, 1); %Q
-        h2 = subplot(1, 3, 2); %all risk
-        h3 = subplot(1, 3, 3); %trial binned risk
-
+        h1 = subplot(2, 2, 1); %P(Risky) Average
+        axis square
+        h2 = subplot(2, 2, 2); %P(Risky) Binned 
+        axis square
+        h3 = subplot(2, 2, 4); %P(High) Average
+        axis square
+        h4 = subplot(2, 2, 3); %P(High) Binned
+        axis square
+       
     else 
 
         figure(1);

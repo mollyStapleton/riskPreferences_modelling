@@ -1,8 +1,11 @@
 function sim_riskPref(model, params, dist, nIters)
 
 if strcmpi(model, 'RW')
-    [Qall, choiceType, totalStim] = sim_RW_riskPref(params, dist, nIters);
-    plot_riskPref(choiceType, totalStim, Qall, [], model, dist, params);
+     [p_risky_t, p_high_t, Qall] = sim_RW_riskPref(params, dist, nIters);
+     plotSim_riskPref(p_risky_t, p_high_t, Qall, dist);
+     txtTitle = {['\fontsize{14} \alpha = ' num2str(params.alpha) '\fontsize{14} \beta = ' num2str(params.beta)]};
+     sgtitle(txtTitle);
+     
 end
 if strcmpi(model, 'RATES')
     [Qall, choiceType, totalStim] = sim_RATES_riskPref(params, dist, nIters);

@@ -5,19 +5,17 @@ if simulate_data
     
         clf;
         for idist = 1: length(dists2run)
-            sim_riskPref(models{models2run(imodel)}, params, dists{idist}, nIters);
+            sim_riskPref(models{models2run(imodel)}, params, dists{dists2run(idist)}, nIters);
         end
 
         gcf;
         if ~strcmpi(models{models2run(imodel)}, 'PEIRS')
-            set(gcf, 'Position', [369.8000 247.4000 1.1616e+03 514.6000]);
+            set(gcf, 'Position', [661 -10.2000 826.4000 721.6000]);
         else 
             set(gcf, 'Position', [111.4000 10.6000 1.2392e+03 636]);
         end
-            cd([base_path save_path '\simulations'])
-            figSavename = [models{models2run(imodel)}];
-            print(figSavename, '-dsvg');
-            print(figSavename, '-dpng');
+            cd([base_path save_path '\simulations\' models{models2run(imodel)} '\' dists{dists2run(idist)}]);
+
 end
 
 %--------------------------------------------------------------------------
@@ -28,11 +26,10 @@ if simulate_model_effects
 
     clf;
     parPredict_riskPref(models{models2run(imodel)}, params, dists(dists2run), nIters);
-    saveFigname = [models{models2run(imodel)} '_paramPredictions'];
+%     saveFigname = ['risk_pref_paramPredictions_lowerBeta'];
     cd([base_path save_path '\parameter_simulations']);
-    figure(1);
-    print(saveFigname, '-dsvg');
-    print(saveFigname, '-dpng');
+%     figure(1);    
+%     print(saveFigname, '-dpng');
 
     figure(2);
     saveFigname = ['accuracy_' models{models2run(imodel)} '_' dists{dists2run} '_paramPredictions_lowerBeta'];
@@ -54,14 +51,13 @@ if model_fit_to_data
 
 
     for isubject = 1: length(subs)
-
         data2run   = allTr_allSubjects([allTr_allSubjects.pt_number == subs(isubject)], [1:10 16]);
         [best_fit_parm(isubject, :), LL(isubject), BIC(isubject)] = modelFitting_riskPref(data2run, models{models2run(imodel)}, params, dists{dists2run}, distSplit, nIters);
         tmpData = [subs(isubject) best_fit_parm(isubject,1) best_fit_parm(isubject, 2) LL(isubject) BIC(isubject)];
         data2save = [data2save; tmpData];
-
     end
 
+    delete(gcp('nocreate'));
     data2save = array2table(data2save);
     data2save.Properties.VariableNames = {'ptIdx', 'alpha', 'beta', 'LL', 'BIC'};
     saveTablename = [models{models2run} '_subjectLvl_paramFits_NEW_' dists{dists2run} '.mat'];

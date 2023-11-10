@@ -11,8 +11,8 @@ col2plot_fit = {[0.7 0.7 0.7], [0 0 0]};
 CFit =  [colormap(cbrewer2('Greys', 40))];
 figure(1);
 clf;
-set(gcf, 'Position', [2.0226e+03 -50.2000 1.4568e+03 728]);
-
+% set(gcf, 'Position', [2.0226e+03 -50.2000 1.4568e+03 728]);
+set(gcf, 'Position', [-11.8000 20.2000 1.5344e+03 750.4000]);
 h1 = axes('Position', [0.001 0.35 0.4 0.4]);
 axis square
 hold on 

@@ -38,8 +38,6 @@ C = colormap(flipud(cbrewer2('RdBu')));
 for idist = 1:2
     for itype = 1:2
         if idist == 1
-            avgParam_alpha = 0.2956;
-            avgParam_beta  = 0.2996;
             if itype == 1
                 axes(h1);
                 axis square
@@ -48,8 +46,6 @@ for idist = 1:2
                 axis square
             end
         else
-            avgParam_alpha = 0.3323;
-            avgParam_beta  = 0.2220;
             if itype == 1
                 axes(h3);
                 axis square
@@ -78,13 +74,6 @@ for idist = 1:2
             title(ttext, 'FontWeight', 'bold', 'FontSize', 12);
             set(gca, 'FontName', 'Arial');
             caxis([0.5 - (1 - 0.5), 0.5 + (0.5 - 0)]);
-            hold on 
-            y_position = find(params.alpha >= avgParam_alpha, 1, 'first'); % x-coordinate of the square's top-left corner
-            x_position = find(params.beta >= avgParam_beta, 1, 'first'); % y-coordinate of the square's top-left corner
-            width = 1;     % Width of the square
-            height = 1;    % Height of the square
-            hold on 
-            rectangle('Position', [x_position, y_position, width, height], 'EdgeColor', 'k', 'LineWidth', 2);
     end
 end
 
@@ -95,8 +84,8 @@ C1.Limits   = [0 1];
 set(gcf, 'Position', [505 51.4000 816 731.2000]);
 
 
-% % generate accuracy prediction plots, for each of the four unmatched
-% % conditions
+generate accuracy prediction plots, for each of the four unmatched
+conditions 
 figure(2);
 C = colormap(flipud(cbrewer2('RdBu')));
 titletext = {'HHSafe-LLSafe', 'HHSafe-LLRisky', 'HHRisky-LLSafe','HHRisky-LLRisky'};
@@ -117,14 +106,6 @@ for istim = 1:4
     title(titletext{istim}, 'FontWeight', 'bold', 'FontSize', 12);
     set(gca, 'FontName', 'Arial');
     caxis([0 1]);
-    hold on
-    y_position = find(params.alpha >= avgParam_alpha, 1, 'first'); % x-coordinate of the square's top-left corner
-    x_position = find(params.beta >= avgParam_beta, 1, 'first'); % y-coordinate of the square's top-left corner
-    width = 1;     % Width of the square
-    height = 1;    % Height of the square
-    hold on
-    rectangle('Position', [x_position, y_position, width, height], 'EdgeColor', 'k', 'LineWidth', 2);
-
 end
 gcf;
 C1 = colorbar;

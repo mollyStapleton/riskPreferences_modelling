@@ -104,13 +104,13 @@ for t = 1:120
         for icmb = 1:2
             stimIdx = [];
             stimIdx = find(stimuli(:, t) == stimCombo{icnd}(icmb));
-            tmp     = [tmp; choiceType(stimIdx, t)];
+            tmp_binary     = [tmp_binary; choiceType(stimIdx, t)];
 %               tmp     = [tmp; p_choice_l(stimIdx, t)];
 
         end
 %         p_risky_t(icnd, t) = nanmean(tmp);
 %           tmp     = [tmp; p_choice_l(stimIdx, t)];
-        p_risky_t(icnd, t) = sum(~isnan(tmp))./length(tmp);
+        p_risky_t(icnd, t) = sum(~isnan(tmp_binary))./length(tmp_binary);
     end
 end
 
