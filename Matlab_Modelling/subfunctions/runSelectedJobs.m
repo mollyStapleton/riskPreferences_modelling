@@ -26,15 +26,15 @@ if simulate_model_effects
 
     clf;
     parPredict_riskPref(models{models2run(imodel)}, params, dists(dists2run), nIters);
-%     saveFigname = ['risk_pref_paramPredictions_lowerBeta'];
+    saveFigname = ['risk_pref_paramPredictions_lowerBeta'];
     cd([base_path save_path '\parameter_simulations']);
-%     figure(1);    
-%     print(saveFigname, '-dpng');
-
-    figure(2);
-    saveFigname = ['accuracy_' models{models2run(imodel)} '_' dists{dists2run} '_paramPredictions_lowerBeta'];
-    print(saveFigname, '-dsvg');
+    figure(1);    
     print(saveFigname, '-dpng');
+
+%     figure(2);
+%     saveFigname = ['accuracy_' models{models2run(imodel)} '_' dists{dists2run} '_paramPredictions_lowerBeta'];
+%     print(saveFigname, '-dsvg');
+%     print(saveFigname, '-dpng');
 
 end
 
@@ -60,7 +60,7 @@ if model_fit_to_data
     delete(gcp('nocreate'));
     data2save = array2table(data2save);
     data2save.Properties.VariableNames = {'ptIdx', 'alpha', 'beta', 'LL', 'BIC'};
-    saveTablename = [models{models2run} '_subjectLvl_paramFits_NEW_' dists{dists2run} '.mat'];
+    saveTablename = [models{models2run} '_subjectLvl_paramFits_Q0_' dists{dists2run} '.mat'];
     cd([base_path save_path '\model_fits\' models{models2run}]);
     save( saveTablename, 'data2save');
     delete(gcp('nocreate'));
@@ -75,7 +75,7 @@ if genData_plotFit
     cd([base_path data_path]);
     load('allTr_allSubjects.mat');
     cd([base_path save_path '\model_fits\' models{models2run}]);
-    load([models{models2run} '_subjectLvl_paramFits_NEW_' dists{dists2run} '.mat'])
+    load([models{models2run} '_subjectLvl_paramFits_Q0_' dists{dists2run} '.mat'])
     %load in previously generated parameter fits
     dataFilename = ['dataPlot_truevsfit_' models{models2run} '_' dists{dists2run} '.mat'];
     if exist(dataFilename)
@@ -89,7 +89,7 @@ if genData_plotFit
                 = genData_riskPref_modelComp(trueData, paramFit, models{models2run}, dists{dists2run});
 
             cd([base_path save_path '\model_fits\' models{models2run} '\subjectSpecific\' dists{dists2run}]);
-            saveFigname = ['PT_' num2str(subs(isubject))];
+            saveFigname = ['PT_' num2str(subs(isubject)) '_Q0'];
             print(saveFigname, '-dpng');
         end
 
@@ -104,7 +104,7 @@ if genData_plotFit
         plotData.accTrue_binned = accTrue_binned;
         plotData.accFit_binned  = accFit_binned;
         cd([base_path save_path '\model_fits\RW']);
-        saveFilename = ['dataPlot_truevsfit_' models{models2run} '_' dists{dists2run} '.mat'];
+        saveFilename = ['dataPlot_truevsfit_' models{models2run} '_' dists{dists2run} '_Q0.mat'];
         save(saveFilename, 'plotData');
     end
 end
@@ -119,17 +119,17 @@ if plot_data_model_comp
 
     % load in fitted parameters
     cd([base_path save_path '\model_fits\' models{models2run}]);
-    load([models{models2run} '_subjectLvl_paramFits_' dists{dists2run} '.mat'])
+    load([models{models2run} '_subjectLvl_paramFits_Q0_' dists{dists2run} '.mat'])
 
     % load in data: 1) true data and 2) generated using fitted parameters
     % generated using
-    dataFilename = ['dataPlot_truevsfit_' models{models2run} '_' dists{dists2run} '.mat'];
+    dataFilename = ['dataPlot_truevsfit_' models{models2run} '_' dists{dists2run} '_Q0.mat'];
     load(dataFilename);
     paramFits = data2save;
 
     plotFit_riskPref(plotData, paramFits, models{models2run}, dists{dists2run});
 
-    figSavename_1 = [models{models2run} '_' dists{dists2run} '_modelFit_riskPref'];
+    figSavename_1 = [models{models2run} '_' dists{dists2run} '_modelFit_riskPref_Q0'];
     figure(1);
     print(figSavename_1, '-dpng');
 end

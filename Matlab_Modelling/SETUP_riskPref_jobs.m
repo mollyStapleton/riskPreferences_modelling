@@ -39,9 +39,9 @@ dists2run   = [2];
 % SELECT JOB TO RUN
 %-------------------------------------------------------------------
 %-------------------------------------------------------------
-simulate_data           = 0;  % Simulate model fits
+simulate_data           = 1;  % Simulate model fits
 simulate_model_effects  = 0;  % Simulate parameter effects on risk preferences
-model_fit_to_data       = 1;  % Fit model to existing data
+model_fit_to_data       = 0;  % Fit model to existing data
 genData_plotFit         = 0;  % Generate data matrix to plot true vs fitted data
                               % Generate individual subject true vs fitted
                               % data plots
@@ -62,9 +62,9 @@ for imodel = 1: length(models2run)
         % used to generate simulated behaviour
         %--------------------------------------------------
         params.Q0               = 50; % FIXED PARAMETER, DO NOT CHANGE
-        params.beta             = 0.2220; %softmax temperature parameter included in all models
+        params.beta             = 0.8003; %softmax temperature parameter included in all models
         if strcmpi(models{models2run(imodel)} , 'RW')
-            params.alpha        = 0.3323;
+            params.alpha        = 0.1972;
         elseif strcmpi(models{models2run(imodel)} , 'RATES')
             params.alpha_pos    = 0.86;
             params.alpha_neg    = 0.48;
@@ -88,7 +88,7 @@ for imodel = 1: length(models2run)
         % parameters 
         %--------------------------------------------------
         params.Q0               = 50; % FIXED PARAMETER, DO NOT CHANGE
-        params.beta             = linspace(0.1, 3, 20); %softmax temperature parameter included in all models
+        params.beta             = linspace(0.1, 2.5, 20); %softmax temperature parameter included in all models
         if strcmpi(models{models2run(imodel)} , 'RW')
             params.alpha        = linspace(0.1, 1, 20);
         elseif strcmpi(models{models2run(imodel)} , 'RATES')
@@ -110,7 +110,7 @@ for imodel = 1: length(models2run)
         % behavioural data
         %--------------------------------------------------
         params.Q0               = 50; % FIXED PARAMETER, DO NOT CHANGE
-        params.beta             = (0 - 3) * rand(1, nIters) + 3;
+        params.beta             = (0 - 2) * rand(1, nIters) + 2;
         if strcmpi(models{models2run(imodel)} , 'RW')
             params.alpha        = rand(1, nIters);
         elseif strcmpi(models{models2run(imodel)} , 'RATES')

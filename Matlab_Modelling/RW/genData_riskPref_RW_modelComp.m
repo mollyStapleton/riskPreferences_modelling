@@ -8,8 +8,10 @@ else
 end
 if strcmpi(dist, 'Gaussian')
     data2use = dataIn(dataIn.distType == 1, :);
+    params.Q0 = [50 50 50 50];
 else
     data2use = dataIn(dataIn.distType == 2, :);
+    params.Q0 = [0 0 0 0];
 end
 
 %     data2use = data2use((1:120), :);
@@ -19,7 +21,8 @@ end
 [meanTrue, binnedTrue] = calculate_riskPref_trueData(data2use, dist);
 
 % simulate data fit using parameter fits
-params.Q0 = [50 50 50 50];
+
+
 params.alpha = paramFit.alpha;
 params.beta  = paramFit.beta;
 

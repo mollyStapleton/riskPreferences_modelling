@@ -2,12 +2,20 @@ function [NegLL,choiceProb, choice_dir, Qs] = LL_RW_riskPref(dataIn_all, a, b)
 
 blockNums = unique(dataIn_all.blockNumber);
 
+% DETERMINE STARTING VALUE BASED ON REWARD DISTRIBUTIONS
+distIdx = dataIn_all.distType(1);
+if distIdx == 1
+    Qstart = 50;
+else 
+    Qstart = 0;
+end
+
 for iblock = 1:length(blockNums)
     
     dataIn                  = [];
     dataIn                  = dataIn_all(dataIn_all.blockNumber == blockNums(iblock), :);
     nTrials                 = size(dataIn, 1);
-    Qt                      = [50 50 50 50]*0+50;
+    Qt                      = [Qstart Qstart Qstart Qstart]*0+Qstart;
     choice_dir              = zeros(1, nTrials);
     choiceProb(iblock, :)   = NaN(1, nTrials);
     choiceProb_LL(iblock, :)= NaN(1, nTrials);

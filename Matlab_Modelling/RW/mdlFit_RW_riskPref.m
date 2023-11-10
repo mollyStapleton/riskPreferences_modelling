@@ -51,7 +51,11 @@ end
     
     % setting for optimization function
     feval = [50000, 50000]; % max number of function evaluations and iterations
-    options = optimset('MaxFunEvals',feval(1),'MaxIter',feval(2),'Display','none');
+    options = optimoptions(@fmincon, 'StepTolerance', 1e-6,...
+        'ConstraintTolerance', 1e-6, 'MaxFunEvals',feval(1),'MaxIter',feval(2),...
+        'Display','none');
+%     options = optimset('MaxFunEvals',feval(1),'MaxIter',feval(2), 'TolFun', 1e-6,...
+%         'TolX', 1e-6, 'Display','iter');
 
     for iter = 1:nIters
         %     parfor iter = 1:nIters
