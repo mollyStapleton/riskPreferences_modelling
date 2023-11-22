@@ -16,8 +16,7 @@ for idist = 1: length(dist)
             countbeta  = countbeta + 1;
             params2run.alpha = ialpha;
             params2run.beta  = ibeta;
-
-            params2run.Q0    = 0;
+            params2run.Q0    = 50;
 %             [Qall{countalpha, countbeta}, choiceType{countalpha, countbeta}, totalStim{countalpha, countbeta},...
 %                 meanAcc{countalpha, countbeta}] = sim_RW_riskPref(params2run, dist{idist}, nIters);
             [p_risky_t{countalpha, countbeta}, p_high_t{countalpha, countbeta},...

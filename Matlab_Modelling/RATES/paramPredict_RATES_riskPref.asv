@@ -24,17 +24,17 @@ for idist = 1: length(dist)
                 params2run.beta  = ibeta;
                 params2run.Q0    = params.Q0;
 
-                [p_risky_t{countbeta}{countalpha_pos, countalpha_neg}, p_high_t{countbeta}{countalpha_pos, countalpha_neg},...
+                [p_risky_t{count_beta}{countalpha_pos, countalpha_neg}, p_high_t{count_beta}{countalpha_pos, countalpha_neg},...
                     ~] = sim_RATES_riskPref(params2run, dist{idist}, nIters);
 
                 for icnd = 1:2
                     mean2plot_risk{idist, icnd}{countbeta}(countalpha_pos, countalpha_neg) = ...
-                        nanmean(p_risky_t{count_beta}{countalpha_pos, countalpha_neg}(icnd,:));
+                        nanmean(p_risky_t{countalpha, countbeta}(icnd,:));
                 end
 
                 for istim = 1:4
                     accPlot{istim}{countbeta}(countalpha_pos, countalpha_neg) = ...
-                        nanmean(p_high_t{count_beta}{countalpha_pos, countalpha_neg}(istim, :));
+                        nanmean(p_high_t{countalpha, countbeta}(istim, :));
                 end
                
             end

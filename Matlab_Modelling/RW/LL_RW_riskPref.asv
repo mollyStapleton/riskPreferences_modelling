@@ -54,6 +54,7 @@ for iblock = 1:length(blockNums)
     end
 
     %     choiceProb(choice_dir==0)=1-choiceProb(choice_dir==0);
+    
     %     choiceProb(iblock, :)=0.99*choiceProb(iblock, :)+0.005;
     %     choiceProb_LL(iblock, ~isnan(choiceProb(iblock, :))) = choiceProb(iblock, ~isnan(choiceProb(iblock, :)));
     %     % compute negative log-likelihood

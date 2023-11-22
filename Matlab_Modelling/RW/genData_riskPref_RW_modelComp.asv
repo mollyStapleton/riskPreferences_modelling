@@ -49,13 +49,10 @@ for icnd = 1:2
         % presentation is side counterbalanced
         stimIdx = find(data2use.stimComboIdx == stimCombo{icnd}(icmb));
             if icmb == 1 
-                tmp     = [tmp; data2use.choiceProb_mdlFit(stimIdx(data2use.choiceDir(stimIdx)==1))];
-            else 
-                tmp     = [tmp; 1 - data2use.choiceProb_mdlFit(stimIdx(data2use.choiceDir(stimIdx)==1))];
-            end
+        tmp     = [tmp; data2use.choiceProb_mdlFit(stimIdx(data2use.choiceDir(stimIdx)==1))];
         
     end
-    meanFit(icnd) = nanmean(tmp);
+    meanFit(icnd) = mean(tmp);
 end
 %----------------------------------------------------------------------------------
 %%% TRIAL BINNED
@@ -72,12 +69,8 @@ for icnd = 1:2
         for icmb = 1:2
             stimIdx = [];
             stimIdx = trIdx(data2use.stimComboIdx(trIdx) == stimCombo{icnd}(icmb));
-            if icmb == 1 
-                tmp     = [tmp; data2use.choiceProb_mdlFit(stimIdx(data2use.choiceDir(stimIdx)==1))];
-            else 
-                tmp     = [tmp; 1 - data2use.choiceProb_mdlFit(stimIdx(data2use.choiceDir(stimIdx)==1))];
-            end
-            binnedFit{icnd}(ibin) = nanmean(tmp);
+            tmp     = [tmp; data2use.choiceProb_mdlFit(stimIdx)];
+            binnedFit{icnd}(ibin) = mean(tmp);
         end
     end
 end
@@ -94,14 +87,10 @@ for istim = 1:4
     for icmb = 1:2
         stimIdx = [];
         stimIdx = find(data2use.stimComboIdx == stimHighIdx{istim}(icmb));
-        if icmb == 1
-            tmp     = [tmp; data2use.choiceProb_mdlFit(stimIdx(data2use.choiceDir(stimIdx)==1))];
-        else
-            tmp     = [tmp; 1 - data2use.choiceProb_mdlFit(stimIdx(data2use.choiceDir(stimIdx)==1))];
-        end
+        tmp     = [tmp; data2use.choiceProb_mdlFit(stimIdx)];
         fullIdx = [fullIdx; stimIdx];
     end
-    accFit(istim) = nanmean(tmp);
+    accFit(istim) = mean(tmp);
     accTrue(istim) = sum(data2use.choice_high(fullIdx)==1)./length(fullIdx);
 end
 %----------------------------------------------------------------------------------
@@ -120,14 +109,10 @@ for istim = 1:4
         for icmb = 1:2
             stimIdx = [];
             stimIdx = trIdx(data2use.stimComboIdx(trIdx) == stimHighIdx{istim}(icmb));
-            if icmb == 1 
-                tmp     = [tmp; data2use.choiceProb_mdlFit(stimIdx(data2use.choiceDir(stimIdx)==1))];
-            else 
-                tmp     = [tmp; 1 - data2use.choiceProb_mdlFit(stimIdx(data2use.choiceDir(stimIdx)==1))];
-            end
+            tmp = [tmp; data2use.choiceProb_mdlFit(stimIdx)];
             fullIdx = [fullIdx; stimIdx];
         end
-        accFit_binned(istim, ibin) = nanmean(tmp);
+        accFit_binned(istim, ibin) = mean(tmp);
         accTrue_binned(istim, ibin) =  sum(data2use.choice_high(fullIdx) == 1)./length(fullIdx);
     end
 end
