@@ -29,12 +29,12 @@ for idist = 1: length(dist)
 
                 for icnd = 1:2
                     mean2plot_risk{idist, icnd}{countbeta}(countalpha_pos, countalpha_neg) = ...
-                        nanmean(p_risky_t{count_beta}{countalpha_pos, countalpha_neg}(icnd,:));
+                        nanmean(p_risky_t{countbeta}{countalpha_pos, countalpha_neg}(icnd,:));
                 end
 
                 for istim = 1:4
                     accPlot{istim}{countbeta}(countalpha_pos, countalpha_neg) = ...
-                        nanmean(p_high_t{count_beta}{countalpha_pos, countalpha_neg}(istim, :));
+                        nanmean(p_high_t{countbeta}{countalpha_pos, countalpha_neg}(istim, :));
                 end
                
             end
@@ -83,4 +83,10 @@ C1 = colorbar;
 C1.Position = [0.93 0.27 0.03 0.5];
 C1.Limits   = [0 1];
 set(gcf, 'Position', [232.2000 1.8000 1.2688e+03 780.8000]);
+
+cd('C:\Users\jf22662\OneDrive - University of Bristol\Documents\GitHub\modelling_figures\parameter_simulations\RATES');
+saveFigname = ['riskPreference'];
+print(saveFigname, '-dpng');
+print(saveFigname, '-dsvg');
+
 end

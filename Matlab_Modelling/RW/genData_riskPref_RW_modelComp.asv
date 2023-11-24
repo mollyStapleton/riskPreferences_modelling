@@ -1,5 +1,5 @@
 function [meanTrue, meanFit, binnedTrue, binnedFit, accTrue, accFit,...
-    accTrue_binned, accFit_binned] = genData_riskPref_RW_modelComp(dataIn, paramFit, dist)
+    accTrue_binned, accFit_binned] = genData_riskPref_RW_modelComp(dataIn, paramFit, model, dist)
 
 if strcmp(dist, 'Gaussian')
     col2plot = {[0.83 0.71 0.98], [0.62 0.35 0.99]};
@@ -22,12 +22,15 @@ end
 
 % simulate data fit using parameter fits
 
-
-params.alpha = paramFit.alpha;
-params.beta  = paramFit.beta;
-
-[NegLL,choiceProb, ~, Qs] = LL_RW_riskPref(data2use, paramFit.alpha, paramFit.beta);
-
+if strcmpi(model, 'RW')
+    params.alpha = paramFit.alpha;
+    params.beta  = paramFit.beta;
+    [NegLL,choiceProb, ~, Qs] = LL_RW_riskPref(data2use, paramFit.alpha, paramFit.beta);
+elseif strcmpi(model, 'RATES')
+    params.alpha = paramFit.alpha;
+    params.beta  = paramFit.beta;
+    [NegLL,choiceProb, ~, Qs] = LL_RATES_riskPref(data2use, paramFit.alpha, paramFit.beta);
+end
 % assigned choice probabilities to the separate blocks 
 blockNum = unique(data2use.blockNumber);
 data2use.choiceProb_mdlFit = NaN(1, size(data2use, 1))';
@@ -49,10 +52,13 @@ for icnd = 1:2
         % presentation is side counterbalanced
         stimIdx = find(data2use.stimComboIdx == stimCombo{icnd}(icmb));
             if icmb == 1 
-        tmp     = [tmp; data2use.choiceProb_mdlFit(stimIdx(data2use.choiceDir(stimIdx)==1))];
+                tmp     = [tmp; data2use.choiceProb_mdlFit(stimIdx(data2use.choiceDir(stimIdx)==1))];
+            else 
+                tmp     = [tmp; 1 - data2use.choiceProb_mdlFit(stimIdx(data2use.choiceDir(stimIdx)==1))];
+            end
         
     end
-    meanFit(icnd) = mean(tmp);
+    meanFit(icnd) = nanmean(tmp);
 end
 %----------------------------------------------------------------------------------
 %%% TRIAL BINNED
@@ -69,8 +75,12 @@ for icnd = 1:2
         for icmb = 1:2
             stimIdx = [];
             stimIdx = trIdx(data2use.stimComboIdx(trIdx) == stimCombo{icnd}(icmb));
-            tmp     = [tmp; data2use.choiceProb_mdlFit(stimIdx)];
-            binnedFit{icnd}(ibin) = mean(tmp);
+            if icmb == 1 
+                tmp     = [tmp; data2use.choiceProb_mdlFit(stimIdx(data2use.choiceDir(stimIdx)==1))];
+            else 
+                tmp     = [tmp; 1 - data2use.choiceProb_mdlFit(stimIdx(data2use.choiceDir(stimIdx)==1))];
+            end
+            binnedFit{icnd}(ibin) = nanmean(tmp);
         end
     end
 end
@@ -87,10 +97,14 @@ for istim = 1:4
     for icmb = 1:2
         stimIdx = [];
         stimIdx = find(data2use.stimComboIdx == stimHighIdx{istim}(icmb));
-        tmp     = [tmp; data2use.choiceProb_mdlFit(stimIdx)];
+        if icmb == 1
+            tmp     = [tmp; data2use.choiceProb_mdlFit(stimIdx(data2use.choiceDir(stimIdx)==1))];
+        else
+            tmp     = [tmp; 1 - data2use.choiceProb_mdlFit(stimIdx(data2use.choiceDir(stimIdx)==1))];
+        end
         fullIdx = [fullIdx; stimIdx];
     end
-    accFit(istim) = mean(tmp);
+    accFit(istim) = nanmean(tmp);
     accTrue(istim) = sum(data2use.choice_high(fullIdx)==1)./length(fullIdx);
 end
 %----------------------------------------------------------------------------------
@@ -109,10 +123,14 @@ for istim = 1:4
         for icmb = 1:2
             stimIdx = [];
             stimIdx = trIdx(data2use.stimComboIdx(trIdx) == stimHighIdx{istim}(icmb));
-            tmp = [tmp; data2use.choiceProb_mdlFit(stimIdx)];
+            if icmb == 1 
+                tmp     = [tmp; data2use.choiceProb_mdlFit(stimIdx(data2use.choiceDir(stimIdx)==1))];
+            else 
+                tmp     = [tmp; 1 - data2use.choiceProb_mdlFit(stimIdx(data2use.choiceDir(stimIdx)==1))];
+            end
             fullIdx = [fullIdx; stimIdx];
         end
-        accFit_binned(istim, ibin) = mean(tmp);
+        accFit_binned(istim, ibin) = nanmean(tmp);
         accTrue_binned(istim, ibin) =  sum(data2use.choice_high(fullIdx) == 1)./length(fullIdx);
     end
 end
