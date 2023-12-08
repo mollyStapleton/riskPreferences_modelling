@@ -1,5 +1,5 @@
 function [meanTrue, meanFit, binnedTrue, binnedFit, accTrue, accFit,...
-    accTrue_binned, accFit_binned] = genData_riskPref_RW_modelComp(dataIn, paramFit, model, dist)
+    accTrue_binned, accFit_binned] = genData_riskPref_modelComp(dataIn, paramFit, model, dist)
 
 if strcmp(dist, 'Gaussian')
     col2plot = {[0.83 0.71 0.98], [0.62 0.35 0.99]};
@@ -22,12 +22,14 @@ end
 
 % simulate data fit using parameter fits
 
+if strcmpi(model, 'RW')
 
-params.alpha = paramFit.alpha;
-params.beta  = paramFit.beta;
+    [NegLL,choiceProb, ~, Qs] = LL_RW_riskPref(data2use, paramFit.fittedParams(1), paramFit.fittedParams(2));
 
-[NegLL,choiceProb, ~, Qs] = LL_RW_riskPref(data2use, paramFit.alpha, paramFit.beta);
+elseif strcmpi(model, 'RATES')
 
+    [NegLL,choiceProb, ~, Qs] = LL_RATES_riskPref(data2use, paramFit.fittedParams(1), paramFit.fittedParams(2), paramFit.fittedParams(3));
+end
 % assigned choice probabilities to the separate blocks 
 blockNum = unique(data2use.blockNumber);
 data2use.choiceProb_mdlFit = NaN(1, size(data2use, 1))';
@@ -141,7 +143,7 @@ data2plot.accTrue           = accTrue;
 data2plot.accFit_binned     = accFit_binned;
 data2plot.accTrue_binned    = accTrue_binned;
 
-plotSubjectFit_RW(data2plot, paramFit, dist);
+plotSubjectFit(data2plot, paramFit, model, dist);
 
 
 end

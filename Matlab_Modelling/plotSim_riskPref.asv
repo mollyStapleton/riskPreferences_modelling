@@ -148,6 +148,5 @@ xlim([0 6]);
 ylabel('\bfAverage Q');
 xlabel('\bfTrial Bin No.');
 set(gca, 'FontName', 'Arial');
-legend({'LL-Safe', 'LL-Risky', 'HH-Safe', 'HH-Risky'});
-
+legend show
 end

@@ -1,6 +1,6 @@
 function plotSubjectFit(dataIn, paramFit, model, dist)
 
-cd(['C:\Users\jf22662\OneDrive - University of Bristol\Documents\GitHub\modelling_figures\model_fits\' model '\subjectLvl' dist '\']);
+cd(['C:\Users\jf22662\OneDrive - University of Bristol\Documents\GitHub\modelling_figures\model_fits\' model '\subjectLvl\' dist '\']);
 % PLOT OF TRUE VS FIT: SINGLE SUBJECT
 figure(1);
 set(gcf, 'Position', [268.2000 69 1.2288e+03 648]);
@@ -173,8 +173,15 @@ plot([0 6], [0.5 0.5], 'k--');
 
 h8 = axes('Position', [0.87 0.05 0.1 0.4]);
 axis square
-txtPlot = {['SubjectIdx: ' num2str(paramFit.ptIdx) ], ['\alpha = '  num2str(paramFit.alpha, '%.4f')], ['\beta = ' num2str(paramFit.beta, '%.4f')],...
-    ['LL = ' num2str(paramFit.LL, '%.2f')], ['BIC = ' num2str(paramFit.BIC, '%.2f')]};
+if strcmpi(model, 'RW')
+    txtPlot = {['SubjectIdx: ' num2str(paramFit.ptIdx) ], ['\alpha = ' num2str(paramFit.fittedParams(1), '%.4f')], ['\beta = ' num2str(paramFit.fittedParams(2), '%.4f')],...
+                ['LL = ' num2str(paramFit.LL, '%.2f')], ['BIC = ' num2str(paramFit.BIC, '%.2f')]};
+elseif strcmpi(model, 'RATES')
+    txtPlot = {['SubjectIdx: ' num2str(paramFit.ptIdx) ], ['\alphaPos = ',  num2str(paramFit.fittedParams(1), '%.4f') ],...
+                ['\alphaNeg = '  num2str(paramFit.fittedParams(2), '%.4f') ], ['\beta = ' num2str(paramFit.fittedParams(3), '%.4f') ],...
+                    ['LL = ' num2str(paramFit.LL, '%.2f') ], ['BIC = ' num2str(paramFit.BIC, '%.2f') ]};
+end
+
 text(0, 0.55, txtPlot, 'FontSize', 12, 'FontName', 'Arial');
 set(gca, 'Visible', 'off')
 end

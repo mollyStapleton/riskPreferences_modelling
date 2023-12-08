@@ -9,17 +9,17 @@ function [best_fit_parm, LL, BIC] = mdlFit_RATES_riskPref(dataIn_all, params, di
 %%% 3) Choice made 
 %%% 4) reward obtained
 %--------------------------------------------------------------------------
-% p = gcp('nocreate');
-% if ~isempty(p)
-%     Nwork = p.NumWorkers;
-% else
-%     Nwork = 0;
-% end
-% if Nwork ~= 4
-%   delete(gcp('nocreate'))
-% %   parpool('local', 4, 'IdleTimeout', 30);
-%   parpool('local', 4);
-% end
+p = gcp('nocreate');
+if ~isempty(p)
+    Nwork = p.NumWorkers;
+else
+    Nwork = 0;
+end
+if Nwork ~= 4
+  delete(gcp('nocreate'))
+%   parpool('local', 4, 'IdleTimeout', 30);
+  parpool('local', 4);
+end
 
 
 % if model fitting to be split by reward distribution, identify

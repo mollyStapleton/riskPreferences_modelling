@@ -9,12 +9,8 @@ if simulate_data
         end
 
         gcf;
-        if ~strcmpi(models{models2run(imodel)}, 'PEIRS')
-            set(gcf, 'Position', [661 -10.2000 826.4000 721.6000]);
-        else 
-            set(gcf, 'Position', [111.4000 10.6000 1.2392e+03 636]);
-        end
-            cd([base_path save_path '\simulations\' models{models2run(imodel)} '\' dists{dists2run(idist)}]);
+        
+            cd([base_path save_path '\simulations\' models{models2run(imodel)} '\']);
             saveFigname = [dists{dists2run(idist)} '_averageFits_simulations'];
             print(saveFigname, '-dsvg');
             print(saveFigname, '-dpng');
@@ -51,17 +47,19 @@ if model_fit_to_data
     %   load in relevant subject data
     cd([base_path data_path]);
     load('allTr_allSubjects.mat');
-
+        data2save  = table();
     for isubject = 1: length(subs)
         data2run   = allTr_allSubjects([allTr_allSubjects.pt_number == subs(isubject)], [1:10 16]);
         [best_fit_parm(isubject, :), LL(isubject), BIC(isubject)] = modelFitting_riskPref(data2run, models{models2run(imodel)}, params, dists{dists2run}, distSplit, nIters);
-        tmpData = [subs(isubject) best_fit_parm(isubject,1) best_fit_parm(isubject, 2) LL(isubject) BIC(isubject)];
-        data2save = [data2save; tmpData];
+        
+        data2save(isubject, :) = [subs(isubject) models{models2run(imodel)},...
+            dists{dists2run} {best_fit_parm(isubject, :)} LL(isubject) BIC(isubject)];
     end
 
-    delete(gcp('nocreate'));
-    data2save = array2table(data2save);
-    data2save.Properties.VariableNames = {'ptIdx', 'alpha', 'beta', 'LL', 'BIC'};
+%     delete(gcp('nocreate'));
+    % fitted params variable will be of different lengths for each model
+    % makes more generalisable for future plotting scripts
+    data2save.Properties.VariableNames = {'ptIdx', 'model', 'dist', 'fittedParams', 'LL', 'BIC'};
     saveTablename = [models{models2run} '_subjectLvl_paramFits_' dists{dists2run} '.mat'];
     cd([base_path save_path '\model_fits\' models{models2run}]);
     save( saveTablename, 'data2save');
@@ -80,7 +78,8 @@ if genData_plotFit
     load([models{models2run} '_subjectLvl_paramFits_' dists{dists2run} '.mat'])
     %load in previously generated parameter fits
     dataFilename = ['dataPlot_truevsfit_' models{models2run} '_' dists{dists2run} '.mat'];
-    if ~exist(dataFilename)
+    if exist(dataFilename)
+        plotData = table();
         for isubject = 1: length(subs)
 
             trueData   = allTr_allSubjects([allTr_allSubjects.pt_number == subs(isubject)], :);
@@ -89,24 +88,24 @@ if genData_plotFit
             [meanTrue(isubject, :), meanFit(isubject, :), binnedTrue(isubject, :), binnedFit(isubject, :)...
                 meanAccTrue(isubject, :), meanAccFit(isubject, :), accTrue_binned{isubject}, accFit_binned{isubject}]...
                 = genData_riskPref_modelComp(trueData, paramFit, models{models2run}, dists{dists2run});
+            
+            plotData(isubject, :) = [subs(isubject), models{models2run(imodel)}...
+                                    dists{dists2run}, {{meanTrue(isubject, :)}}, {{meanFit(isubject, :)}},...
+                                    cell2mat(binnedTrue(isubject, :)'), cell2mat(binnedFit(isubject, :)'),...
+                                    {{meanAccTrue(isubject, :)}}, {{meanAccFit(isubject, :)}},...
+                                    cell2mat(accTrue_binned(isubject)), cell2mat(accFit_binned(isubject))];
 
-            cd([base_path save_path '\model_fits\' models{models2run} '\subjectSpecific\' dists{dists2run}]);
+            cd([base_path save_path '\model_fits\' models{models2run} '\subjectLvl\' dists{dists2run}]);
             saveFigname = ['PT_' num2str(subs(isubject))];
             print(saveFigname, '-dpng');
         end
 
         % save risk preference data: TRUE and FITTED
 
-        plotData.meanTrue       = meanTrue;
-        plotData.meanFit        = meanFit;
-        plotData.binnedTrue     = binnedTrue;
-        plotData.binnedFit      = binnedFit;
-        plotData.accFit         = meanAccFit;
-        plotData.accTrue        = meanAccTrue;
-        plotData.accTrue_binned = accTrue_binned;
-        plotData.accFit_binned  = accFit_binned;
-        cd([base_path save_path '\model_fits\RW']);
-        saveFilename = ['dataPlot_truevsfit_' models{models2run} '_' dists{dists2run} '_KT.mat'];
+        plotData.Properties.VariableNames = {'ptIdx', 'model', 'dist', 'meanTrue', 'meanFit', 'binnedTrue', 'binnedFit',...
+            'meanAccTrue', 'meanAccFit', 'accTrue_binned', 'accFit_binned'};
+        cd([base_path save_path '\model_fits\' models{models2run}]);
+        saveFilename = ['dataPlot_truevsfit_' models{models2run} '_' dists{dists2run} '.mat'];
         save(saveFilename, 'plotData');
     end
 end

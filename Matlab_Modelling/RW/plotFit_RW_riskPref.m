@@ -1,4 +1,4 @@
-function plotFit_RW_riskPref(dataIn, paramFit, dist)
+function plotFit_riskPref(dataIn, paramFit, model, dist)
 
 if strcmp(dist, 'Gaussian')
     col2plot = {[0.83 0.71 0.98], [0.62 0.35 0.99]};
@@ -16,10 +16,15 @@ set(gcf, 'Position', [-11.8000 20.2000 1.5344e+03 750.4000]);
 h1 = axes('Position', [0.001 0.35 0.4 0.4]);
 axis square
 hold on 
-ba = boxchart([paramFit.alpha paramFit.beta], 'BoxFaceColor', col2plot{1});
+if strcmpi(model, 'RW')
+    ba = boxchart([paramFit.alpha paramFit.beta], 'BoxFaceColor', col2plot{1});
+    set(gca, 'XTickLabel', {'\alpha', '\beta'})
+elseif strcmpi(model, 'RATES')
+    ba = boxchart([paramFit.fittedParams], 'BoxFaceColor', col2plot{1});
+    set(gca, 'XTickLabel', {'\alphaPos', '\alphaNeg', '\beta'})
+end
 
 ylabel('Fitted Parameter Values');
-set(gca, 'XTickLabel', {'\alpha', '\beta'})
 title('Descriptives');
 set(gca, 'FontName', 'Arial');
 
@@ -46,15 +51,15 @@ for icnd = 1:2
 
     for itype = 1:2 
         if itype == 1 
-            meanData = dataIn.meanTrue(:, icnd);
+            meanData = cell2mat(dataIn.meanTrue);
             colPlot  = col2plot;
         else 
-            meanData = dataIn.meanFit(:, icnd);
+            meanData = cell2mat(dataIn.meanFit);
             colPlot  = col2plot_fit;
         end
 
-            mean2plot(itype, icnd) = nanmean(meanData);
-            sem2plot(itype, icnd)  = nanstd(meanData)./sqrt(length(meanData));
+            mean2plot(itype, icnd) = nanmean(meanData(:, icnd));
+            sem2plot(itype, icnd)  = nanstd(meanData(:, icnd))./sqrt(length(meanData(:, icnd)));
         
             hold on 
             [hb, hberr] = barwitherr(sem2plot(itype, icnd), mean2plot(itype, icnd), 'FaceColor',...
@@ -90,11 +95,15 @@ for icnd = 1:2
         h.YAxis.Visible = 'off';
         hold on
     end
-    mean2plot_true{icnd} = nanmean(cell2mat(dataIn.binnedTrue(:, icnd)));
-    sem2plot_true{icnd}  = nanstd(cell2mat(dataIn.binnedTrue(:, icnd)))./sqrt(length(cell2mat(dataIn.binnedTrue(:, icnd))));
+    tmp                  = [];
+    tmp                  = cell2mat([dataIn.binnedTrue]);
+    mean2plot_true{icnd} = nanmean(tmp(icnd: 2: end, :));
+    sem2plot_true{icnd}  = nanstd(tmp(icnd: 2: end, :))./sqrt(length(tmp(icnd: 2: end, :)));
     errorbar(mean2plot_true{icnd}, sem2plot_true{icnd}, 'Color', col2plot{icnd}, 'LineWidth', 1.2);
-    mean2plot_fit{icnd}  = nanmean(cell2mat(dataIn.binnedFit(:, icnd)));
-    sem2plot_fit{icnd}  = nanstd(cell2mat(dataIn.binnedFit(:, icnd)))./sqrt(length(cell2mat(dataIn.binnedFit(:, icnd))));
+    tmp                  = [];
+    tmp                  = cell2mat([dataIn.binnedFit]);
+    mean2plot_fit{icnd}  = nanmean(tmp(icnd: 2: end, :));
+    sem2plot_fit{icnd}   = nanstd(tmp(icnd: 2: end, :))./sqrt(length(tmp(icnd: 2: end, :)));
     errorbar(mean2plot_fit{icnd}, sem2plot_fit{icnd}, 'Color', col2plot_fit{icnd}, 'LineWidth', 1.2);
 
 end
@@ -129,17 +138,17 @@ fitX    = [1 2.5 4 5.5];
 for istim = 1:4
     for itype = 1:2
         if itype == 1
-            meanData = dataIn.accTrue(:, istim);
+            tmpData = cell2mat([dataIn.meanAccTrue]);
             colFil   = trueCol;
             x2plot = trueX;
         else
-            meanData = dataIn.accFit(:, istim);
+            tmpData = cell2mat([dataIn.meanAccFit]);
             colFil   = [1 1 1; 1 1 1; 1 1 1; 1 1 1];
             x2plot = fitX;
         end
 
-        mean2plot(itype, istim) = nanmean(meanData);
-        sem2plot(itype, istim)  = nanstd(meanData)./sqrt(length(meanData));
+        mean2plot(itype, istim) = nanmean(tmpData(:, istim));
+        sem2plot(itype, istim)  = nanstd(tmpData(:, istim))./sqrt(length(tmpData(:, istim)));
         hold on
         [hb, hberr] = barwitherr(sem2plot(itype, istim), mean2plot(itype, istim), 'FaceColor',...
             colFil(istim, :), 'EdgeColor', trueCol(istim, :), 'BarWidth', 0.5);
@@ -170,7 +179,7 @@ set(gca, 'FontSize', 8);
 %%% PLOT P(HIGH) TRIAL BINNED: FIT VS TRUE
 %------------------------------------------------------------------------------
 h7 = axes('Position', [0.64 0.06 0.15 0.4]); 
-tmpData = cell2mat(dataIn.accTrue_binned(1, :)');
+tmpData = cell2mat(dataIn.accTrue_binned);
 for istim = 1:4
     
     stimData = [];
@@ -196,7 +205,7 @@ set(gca, 'FontName', 'Arial');
 
 h8 = axes('Position', [0.82 0.06 0.15 0.4]); 
 CFit =  [colormap(cbrewer2('Greys', 40))];
-tmpData = cell2mat(dataIn.accFit_binned(1, :)');
+tmpData = cell2mat(dataIn.accFit_binned);
 for istim = 1:4
     
     stimData = [];
