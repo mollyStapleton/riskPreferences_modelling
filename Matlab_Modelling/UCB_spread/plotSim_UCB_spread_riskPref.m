@@ -1,4 +1,4 @@
-function plotSim_UCB_nCounts_riskPref(p_risky_t, p_high_t, Qall, UCBall, model, dist)
+function plotSim_UCB_spread_riskPref(p_risky_t, p_high_t, Qall, UCBall, Sall, model, dist)
 
 if strcmp(dist, 'Gaussian')
     col2plot = {[0.83 0.71 0.98], [0.62 0.35 0.99]};
@@ -9,6 +9,7 @@ else
 end
 
 figure(1);
+set(gcf, 'Position', [488 1.8000 841 780.8000]);
 subplot(2, 2, 1);
 axis square 
 
@@ -71,10 +72,11 @@ for istim = 1:4
 end
 xlim([0 5]);
 ylim([0 1]);
+set(gca, 'XTick', []);
 hold on 
 ylabel('\bfP(High)');
 plot([0 6], [0.5 0.5], 'k--');
-legend({'HHSafe-LLSafe', '', 'HHSafe-LLRisky','', 'HHRisky-LLSafe','', 'HHRisky-LLRisky',  ''}, 'location', [0.47 0.47 0.1 0.1]);
+legend({'HHSafe-LLSafe', '', 'HHSafe-LLRisky','', 'HHRisky-LLSafe','', 'HHRisky-LLRisky',  ''}, 'location', [0.7 0.47 0.1 0.1]);
 title('\fontsize{12} \bfAccuracy');
 
 %--------------------------------------------------------------------------
@@ -101,11 +103,11 @@ plot([0 6], [0.5 0.5], 'k--');
 ylabel('\bfP(High)');
 xlabel('\bfTrial Bin No.');
 set(gca, 'FontName', 'Arial');
-figure(1);
-set(gcf, 'Position', [2.0114e+03 -56.6000 781.6000 699.2000]);
+
+
 figure(2);
-set(gcf, 'Position', [2793 -58.2000 796.8000 700.8000]);
-subplot(2, 2, 1);
+set(gcf, 'Position', [473 1.8000 977.6000 780.8000]);
+subplot(2, 3, 1);
 axis square
 QC = [1 1 1; col2plot{1}; 1 1 1; col2plot{2}];
 QCout = [col2plot{1}; col2plot{1}; col2plot{2}; col2plot{2}];
@@ -123,13 +125,13 @@ hold on
 plot([0 2.5], [40 40], 'b-', 'linew', 1.2);
 plot([2.5 5], [60 60], 'r-', 'linew', 1.2);
 ylabel('\bfAverage Q');
-set(gca, 'XTick', [1 4]);
+set(gca, 'XTick', [1:4]);
 set(gca, 'XTickLabel', {'\bfLL-Safe', '\bfLL-Risky', '\bfHH-Safe', '\bfHH-Risky'});
 set(gca, 'XTickLabelRotation', 45);
 set(gca, 'FontName', 'Arial');
 title('\bf\fontsize{12} Average Q')
 
-subplot(2, 2, 3);
+subplot(2, 3, 4);
 axis square
 lstyle = {'--', '-', '--', '-'};
 for istim = 1:4
@@ -146,9 +148,9 @@ xlim([0 6]);
 ylabel('\bfAverage Q');
 xlabel('\bfTrial Bin No.');
 set(gca, 'FontName', 'Arial');
-legend({'LL-Safe', 'LL-Risky', 'HH-Safe', 'HH-Risky'}, 'location', [0.47 0.47 0.1 0.1]);
+legend({'LL-Safe', 'LL-Risky', 'HH-Safe', 'HH-Risky'}, 'location', [0.05 0.44 0.1 0.1]);
 
-subplot(2, 2, 2);
+subplot(2, 3, 2);
 axis square
 for istim = 1:4
     hold on 
@@ -160,13 +162,13 @@ end
 xlim([0 5]);
 hold on 
 ylabel('\bfAverage UCB');
-set(gca, 'XTick', [1 4]);
+set(gca, 'XTick', [1:4]);
 set(gca, 'XTickLabel', {'\bfLL-Safe', '\bfLL-Risky', '\bfHH-Safe', '\bfHH-Risky'});
 set(gca, 'XTickLabelRotation', 45);
 set(gca, 'FontName', 'Arial');
 title('\bf\fontsize{12} Average UCB')
 
-subplot(2, 2, 4);
+subplot(2, 3, 5);
 axis square
 lstyle = {'--', '-', '--', '-'};
 for istim = 1:4
@@ -176,19 +178,53 @@ for istim = 1:4
         hold on 
         plot(meanUCB(istim, :), 'color', QCout(istim, :), 'linestyle', lstyle{istim}, 'linew', 1.2);
         hold on
-        x = 1:120;
-        % Calculate upper and lower bounds for the shaded area
-%         y_upper = meanUCB(istim, :) + semUCB(istim, :);
-%         y_lower = meanUCB(istim, :) - semUCB(istim, :);
-        % Create a shaded area between the upper and lower bounds
-%         
-%         fill([x(1:end-1), fliplr(x(1:end-1))], [y_upper(1:end-1), fliplr(y_lower(1:end-1))], QCout(istim, :),...
-%             'FaceAlpha', 0.25, 'EdgeColor', QCout(istim, :));
-
+     
 end
 
 xlim([0 120]);
 ylabel('\bfAverage UCB');
+xlabel('\bfTrial Bin No.');
+set(gca, 'FontName', 'Arial');
+
+subplot(2, 3, 3);
+axis square
+QC = [1 1 1; col2plot{1}; 1 1 1; col2plot{2}];
+QCout = [col2plot{1}; col2plot{1}; col2plot{2}; col2plot{2}];
+
+for istim = 1:4
+    hold on 
+    [hb hbErr] = barwitherr([nanstd(nanstd(Sall{istim}))./sqrt(length(Sall{istim}))],...
+        [nanmean(nanmean(Sall{istim}))], 'FaceColor', QC(istim, :), 'EdgeColor', QCout(istim, :));    
+    hb.XData = istim;
+    hbErr.XData = istim;
+end
+xlim([0 5]);
+ylim([0 80]);
+hold on 
+plot([0 2.5], [5 5], 'b-', 'linew', 1.2);
+plot([2.5 5], [15 15], 'r-', 'linew', 1.2);
+ylabel('\bfAverage S');
+set(gca, 'XTick', [1:4]);
+set(gca, 'XTickLabel', {'\bfLL-Safe', '\bfLL-Risky', '\bfHH-Safe', '\bfHH-Risky'});
+set(gca, 'XTickLabelRotation', 45);
+set(gca, 'FontName', 'Arial');
+title('\bf\fontsize{12} Average S');
+
+subplot(2, 3, 6);
+axis square
+lstyle = {'--', '-', '--', '-'};
+for istim = 1:4
+    for ibin = 1: length(bin)
+        meanS(istim, ibin) = nanmean(nanmean(Sall{istim}(bin(ibin): (bin(ibin) + binSize -1))));
+        semS(istim, ibin) = nanstd(Sall{istim}(bin(ibin): (bin(ibin) + binSize -1)))...
+        /sqrt(length((bin(ibin): (bin(ibin) + binSize -1))));
+    
+    end
+hold on 
+errorbar(meanS(istim, :), semS(istim, :), 'color', QCout(istim, :), 'linestyle', lstyle{istim}, 'linew', 1.2);
+end
+xlim([0 6]);
+ylabel('\bfAverage S');
 xlabel('\bfTrial Bin No.');
 set(gca, 'FontName', 'Arial');
 

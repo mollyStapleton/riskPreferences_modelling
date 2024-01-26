@@ -21,7 +21,10 @@ if strcmpi(model, 'RW')
     set(gca, 'XTickLabel', {'\alpha', '\beta'})
 elseif strcmpi(model, 'RATES')
     ba = boxchart([paramFit.fittedParams], 'BoxFaceColor', col2plot{1});
-    set(gca, 'XTickLabel', {'\alphaPos', '\alphaNeg', '\beta'})
+    set(gca, 'XTickLabel', {'\alphaPos', '\alphaNeg', '\beta'});
+elseif strcmpi(model, 'UCB_nCount')
+    ba = boxchart([paramFit.fittedParams], 'BoxFaceColor', col2plot{1});
+    set(gca, 'XTickLabel', {'\alpha', '\beta', 'c'})
 end
 
 ylabel('Fitted Parameter Values');

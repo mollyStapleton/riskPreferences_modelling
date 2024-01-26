@@ -10,6 +10,9 @@ end
 if strcmpi(model, 'UCB_nCount')
         paramPredict_UCB_nCount_riskPref(params, dist, nIters);
 end
+if strcmpi(model, 'UCB_spread')
+        paramPredict_UCB_spread_riskPref(params, dist, nIters);
+end
 % if strcmpi(model, 'RATES')
 %     [Qall, choiceType, totalStim] = sim_RATES_riskPref(params, dist, nIters);
 %     plot_riskPref(choiceType, totalStim, Qall, [], model, dist, params);

@@ -95,10 +95,10 @@ C1.Limits   = [0 1];
 set(gcf, 'Position', [505 51.4000 816 731.2000]);
 
 cd('C:\Users\jf22662\OneDrive - University of Bristol\Documents\GitHub\modelling_figures\parameter_simulations\RW')
-% saveFigname = ['riskPreferences'];
-% print(saveFigname, '-dpng');
-% print(saveFigname, '-dsvg');
-% print(saveFigname, '-dpdf');
+saveFigname = ['riskPreferences'];
+print(saveFigname, '-dpng');
+print(saveFigname, '-dsvg');
+print(saveFigname, '-dpdf');
 % % generate accuracy prediction plots, for each of the four unmatched
 % % conditions
 avgParam_alpha = 0.2948;

@@ -29,6 +29,14 @@ if strcmpi(model, 'RW')
 elseif strcmpi(model, 'RATES')
 
     [NegLL,choiceProb, ~, Qs] = LL_RATES_riskPref(data2use, paramFit.fittedParams(1), paramFit.fittedParams(2), paramFit.fittedParams(3));
+
+elseif strcmpi(model, 'UCB_nCount')
+
+        [NegLL,choiceProb, ~, Qs] = LL_UCB_nCount_riskPref(data2use, paramFit.fittedParams(1), paramFit.fittedParams(2), paramFit.fittedParams(3));
+
+elseif strcmpi(model, 'UCB_spread')
+
+        [NegLL,choiceProb, ~, Qs] = LL_UCB_spread_riskPref(data2use, paramFit.fittedParams(1), paramFit.fittedParams(2), paramFit.fittedParams(3), paramFit.fittedParams(4), paramFit.fittedParams(5));
 end
 % assigned choice probabilities to the separate blocks 
 blockNum = unique(data2use.blockNumber);

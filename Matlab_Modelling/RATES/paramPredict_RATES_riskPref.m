@@ -52,7 +52,7 @@ for idist = 1
     for itype = 1:2
 %         for iplot = 1: length(plotLoc{idist}(1, :))
           for iplot = 1: length(plotLoc(itype, :))
-            ax2plot = subplot(5, 2, plotLoc(itype, iplot))
+            ax2plot = subplot(5, 2, plotLoc(itype, iplot));
 %             ax2plot = subplot(5, 4, plotLoc{idist}(itype, iplot));
             axes(ax2plot);
             axis square

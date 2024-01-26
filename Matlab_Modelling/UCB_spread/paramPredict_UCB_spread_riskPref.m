@@ -1,15 +1,15 @@
-function paramPredict_UCB_nCount_riskPref(params, dist, nIters)
+function paramPredict_UCB_spread_riskPref(params, dist, nIters)
 
 figure(1);
 
-params.beta = params.beta(1:4:end);
+
 for idist = 1: length(dist)
    countalpha = 0; countc = 0; countbeta = 0;
 
     for ibeta = params.beta
 
        countbeta  = countbeta + 1;
-       countalpha = 0;countc = 0;
+       countalpha = 0; countc = 0;
 
         for ialpha = params.alpha           
             
@@ -24,15 +24,18 @@ for idist = 1: length(dist)
                 params2run.c = ic;
                 params2run.beta  = ibeta;
                 params2run.Q0    = params.Q0;
-                [Qall{countbeta}{countalpha,countc}, choiceType{countbeta}{countalpha,countc}, totalStim{countbeta}{countalpha,countc}]...
-                    = sim_UCB_nCount_riskPref(params2run, dist{idist}, nIters);
-                [all, ~] = calculate_riskPref(choiceType{countbeta}{countalpha,countc}, totalStim{countbeta}{countalpha,countc});
-                for itype = 1:2
-        
-                    mean2plot_risk{idist, itype}{countbeta}(countalpha,countc) = nanmean(all{itype});
-                    sem2plot_risk{idist, itype}{countbeta}(countalpha,countc)  = nanstd(all{itype})./sqrt(length(all{itype}));
-        
-        
+                params2run.S0    = params.S0;
+                [p_risky_t{countbeta}{countalpha, countc}, p_high_t{countbeta}{countalpha, countc},...
+                    ~, ~, ~]= sim_UCB_spread_riskPref(params2run, dist{idist}, nIters);
+
+                for icnd = 1:2
+                    mean2plot_risk{idist, icnd}{countbeta}(countalpha, countc) = ...
+                        nanmean(p_risky_t{countbeta}{countalpha, countc}(icnd,:));
+                end
+
+                for istim = 1:4
+                    accPlot{istim}{countbeta}(countalpha, countc) = ...
+                        nanmean(p_high_t{countbeta}{countalpha, countc}(istim, :));
                 end
             end
         end
@@ -40,12 +43,15 @@ for idist = 1: length(dist)
 end
 
 % set indices for subplot locations 
-plotLoc = [{[1 5 9 13 17; 2 6 10 14 18]}, {[3 7 11 15 19; 4 8 12 16 20]}];
+% plotLoc = [{[1 5 9 13 17; 2 6 10 14 18]}, {[3 7 11 15 19; 4 8 12 16 20]}];
+plotLoc   = [1 3 5 7 9; 2 4 6 8 10];
 C = colormap(flipud(cbrewer2('RdBu')));
-for idist = 1:2
+for idist = 1
     for itype = 1:2
-        for iplot = 1: length(plotLoc{idist}(1, :))
-            ax2plot = subplot(5, 4, plotLoc{idist}(itype, iplot));
+%         for iplot = 1: length(plotLoc{idist}(1, :))
+        for iplot = 1: length(plotLoc(itype, :))
+            ax2plot = subplot(5, 2, plotLoc(itype, iplot))
+%             ax2plot = subplot(5, 4, plotLoc{idist}(itype, iplot));
             axes(ax2plot);
             axis square
             hold on

@@ -32,8 +32,10 @@ if simulate_model_effects
 
     clf;
     parPredict_riskPref(models{models2run(imodel)}, params, dists(dists2run), nIters);
-    saveFigname = [dists{dists2run} '_risk_pref_paramPredictions'];
+    saveFigname = ['risk_pref_paramPredictions'];
     cd([base_path save_path '\parameter_simulations\' models{models2run(imodel)}]);
+
+    
     figure(1);    
     print(saveFigname, '-dpng');
 
@@ -85,7 +87,7 @@ if genData_plotFit
     load([models{models2run} '_subjectLvl_paramFits_' dists{dists2run} '.mat'])
     %load in previously generated parameter fits
     dataFilename = ['dataPlot_truevsfit_' models{models2run} '_' dists{dists2run} '.mat'];
-    if exist(dataFilename)
+    if ~exist(dataFilename)
         plotData = table();
         for isubject = 1: length(subs)
 
