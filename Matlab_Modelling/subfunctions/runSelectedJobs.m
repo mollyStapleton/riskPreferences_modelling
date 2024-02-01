@@ -85,7 +85,7 @@ if genData_plotFit
     load([models{models2run} '_subjectLvl_paramFits_' dists{dists2run} '.mat'])
     %load in previously generated parameter fits
     dataFilename = ['dataPlot_truevsfit_' models{models2run} '_' dists{dists2run} '.mat'];
-    if exist(dataFilename)
+    if ~exist(dataFilename)
         plotData = table();
         for isubject = 1: length(subs)
 

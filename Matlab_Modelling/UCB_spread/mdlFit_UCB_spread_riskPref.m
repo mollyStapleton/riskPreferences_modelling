@@ -9,18 +9,6 @@ function [best_fit_parm, LL, BIC] = mdlFit_UCB_nCount_riskPref(dataIn_all, param
 %%% 3) Choice made 
 %%% 4) reward obtained
 %--------------------------------------------------------------------------
-p = gcp('nocreate');
-if ~isempty(p)
-    Nwork = p.NumWorkers;
-else
-    Nwork = 0;
-end
-if Nwork ~= 4
-  delete(gcp('nocreate'))
-%   parpool('local', 4, 'IdleTimeout', 30);
-  parpool('local', 4);
-end
-
 
 % if model fitting to be split by reward distribution, identify
 % distribution specific trials
@@ -43,7 +31,7 @@ end
 
     obFunc = @(x) LL_UCB_spread_riskPref(dataIn_all, x(1), x(2), x(3), x(4), x(5));
     LB = [0 0 0 0 0];
-    UB = [1 1 3 2 10];
+    UB = [1 1 3 2 15];
     % return set of parameters to be fit (alpha, beta, c for UCB_nCount model)
     for iter = 1:nIters
         X0(iter,:) = [params.alphaQ(iter) params.alphaS(iter) params.beta(iter),...
