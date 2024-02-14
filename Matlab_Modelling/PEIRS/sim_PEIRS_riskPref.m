@@ -1,4 +1,4 @@
-function [Qall, Sall, choiceType, totalStim] = sim_PEIRS_riskPref(params, dist, nIters)
+function [Qall, Sall, choiceType, totalStim, PEIRS] = sim_PEIRS_riskPref(params, dist, nIters)
 
     choiceType   = NaN(nIters, 120);
     totalStim_L  = NaN(nIters, 120);
@@ -33,10 +33,11 @@ function [Qall, Sall, choiceType, totalStim] = sim_PEIRS_riskPref(params, dist, 
 
             % stimulus prediction error 
             delta_stim(t) = ( Qt(stimL) + Qt(stimR) ) / 2 - sum(Qt(1:4)) / 4;
-            PEIRS(t)      = tanh(params.omega);
+            PEIRS(t) = tanh(params.omega * delta_stim(t));
+
             % softmax to determine choice
-            v1          = Qt(stimL) + PEIRS(t) + St(stimL);
-            v2          = Qt(stimR) + PEIRS(t) + St(stimR);
+            v1          = Qt(stimL) + PEIRS(t) * St(stimL);
+            v2          = Qt(stimR) + PEIRS(t) * St(stimR);
 
             p(i, t)     = exp(params.beta * v1)./(exp(params.beta*v1) + exp(params.beta*v2));
     

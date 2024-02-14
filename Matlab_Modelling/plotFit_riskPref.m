@@ -25,11 +25,20 @@ elseif strcmpi(model, 'RATES')
 elseif strcmpi(model, 'UCB_nCount')
     ba = boxchart([paramFit.fittedParams], 'BoxFaceColor', col2plot{1});
     set(gca, 'XTickLabel', {'\alpha', '\beta', 'c'})
+elseif strcmpi(model, 'UCB_spread')
+    ba = boxchart([paramFit.fittedParams], 'BoxFaceColor', col2plot{1});
+    set(gca, 'XTickLabel', {'\alphaQ', '\alphaS',  '\beta', 'c', 'S0'})
 end
 
+for ic = 1: size(paramFit.fittedParams, 2)   
+    xscatt_coord(1: size(paramFit.fittedParams, 1), ic) = ic;    
+end
+hold on 
+plot(xscatt_coord, paramFit.fittedParams, '.', 'Color', col2plot{2}, 'MarkerSize', 15);
 ylabel('Fitted Parameter Values');
 title('Descriptives');
 set(gca, 'FontName', 'Arial');
+ylim([-1 20]);
 
 %--------------------------------------------------------------------------
 %%% PLOT P(RISKY) OVERALL: FIT VS TRUE
@@ -63,12 +72,15 @@ for icnd = 1:2
 
             mean2plot(itype, icnd) = nanmean(meanData(:, icnd));
             sem2plot(itype, icnd)  = nanstd(meanData(:, icnd))./sqrt(length(meanData(:, icnd)));
-        
+            hold on
+            plot(itype, meanData(:, icnd), '.', 'color', colPlot{icnd}, 'MarkerSize', 15);
             hold on 
             [hb, hberr] = barwitherr(sem2plot(itype, icnd), mean2plot(itype, icnd), 'FaceColor',...
-                colPlot{icnd}, 'EdgeColor', colPlot{icnd});
+                'none', 'EdgeColor', colPlot{icnd}, 'linew', 2);
             hb.XData = itype;
+            hberr.LineWidth = 1
             hberr.XData = itype;
+            
     end
     xlim([0 3]);
     ylim([0 1]);

@@ -1,4 +1,4 @@
-function [best_fit_parm, LL, BIC] = mdlFit_UCB_spread_riskPref(dataIn_all, params, dist, distSplit, nIters)
+function [best_fit_parm, LL, BIC] = mdlFit_PEIRS_riskPref(dataIn_all, params, dist, distSplit, nIters)
 
 %-------------------------------------------------------------------
 %%% RW model fit to risk preferences 
@@ -29,13 +29,18 @@ end
     % @(x) defines the input of the function
     % function inputs (dataIn, alpha, beta)
 
-    obFunc = @(x) LL_UCB_spread_riskPref(dataIn_all, x(1), x(2), x(3), x(4), x(5));
-    LB = [0 0 0 0 1];
-    UB = [1 1 3 2 15];
+    obFunc = @(x) LL_PEIRS_riskPref(dataIn_all, x(1), x(2), x(3), x(4), x(5));
+    LB = [0 0 0 1 -20];
+    UB = [1 1 3 15 20];
+
+    % for PEIRS model alphaQ should be greater than alphaS
+
+    nonlcon = @(x) constraint_LR(x(1), x(2));
+
     % return set of parameters to be fit (alpha, beta, c for UCB_nCount model)
     for iter = 1:nIters
         X0(iter,:) = [params.alphaQ(iter) params.alphaS(iter) params.beta(iter),...
-            params.c(iter) params.S0(iter)];
+            params.S0(iter) params.omega(iter)];
     end
     
     % setting for optimization function
@@ -49,7 +54,7 @@ end
     for iter = 1:nIters
         %     parfor iter = 1:nIters
 %         [Xfit_grid(iter,:), NegLL_grid(iter)] = fminsearchbnd(obFunc, X0(iter,:), LB, UB, options);
-        [Xfit_grid(iter,:), NegLL_grid(iter, 1)] = fmincon(obFunc,X0(iter,:),[],[],[],[],LB,UB,[],options);
+        [Xfit_grid(iter,:), NegLL_grid(iter, 1)] = fmincon(obFunc,X0(iter,:),[],[],[],[],LB,UB, nonlcon, options);
     end
 
     [~,best] = min(NegLL_grid);

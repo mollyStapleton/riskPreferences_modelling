@@ -37,6 +37,10 @@ elseif strcmpi(model, 'UCB_nCount')
 elseif strcmpi(model, 'UCB_spread')
 
         [NegLL,choiceProb, ~, Qs] = LL_UCB_spread_riskPref(data2use, paramFit.fittedParams(1), paramFit.fittedParams(2), paramFit.fittedParams(3), paramFit.fittedParams(4), paramFit.fittedParams(5));
+
+elseif strcmpi(model, 'PEIRS')
+
+        [NegLL,choiceProb, ~, Qs] = LL_PEIRS_riskPref(data2use, paramFit.fittedParams(1), paramFit.fittedParams(2), paramFit.fittedParams(3), paramFit.fittedParams(4), paramFit.fittedParams(5));
 end
 % assigned choice probabilities to the separate blocks 
 blockNum = unique(data2use.blockNumber);

@@ -1,4 +1,4 @@
-function plot_riskPref(choiceType, totalStim, Qall, Sall, model, dist, params)
+function plotSim_PEIRS_riskPref(choiceType, totalStim, Qall, Sall, PEIRS, model, dist, params)
 
     if strcmp(dist, 'Gaussian')
         col2plot = {[0.83 0.71 0.98], [0.62 0.35 0.99]};

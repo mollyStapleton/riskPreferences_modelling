@@ -24,8 +24,8 @@ if strcmpi(model, 'UCB_spread')
 end
 
 if strcmpi(model, 'PEIRS')
-    [Qall, Sall, choiceType, totalStim] = sim_PEIRS_riskPref(params, dist, nIters);
-    plot_riskPref(choiceType, totalStim, Qall, Sall, model, dist, params);
+    [Qall, Sall, choiceType, totalStim, PEIRS] = sim_PEIRS_riskPref(params, dist, nIters);
+    plotSim_PEIRS_riskPref(choiceType, totalStim, Qall, Sall, PEIRS, model, dist, params);
 end
 
 

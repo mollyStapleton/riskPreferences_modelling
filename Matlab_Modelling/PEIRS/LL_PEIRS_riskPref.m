@@ -1,4 +1,4 @@
-function [NegLL,choiceProb, choice_dir, Qs] = LL_UCB_spread_riskPref(dataIn_all, aQ, aS, b, c, S0)
+function [NegLL,choiceProb, choice_dir, Qs] = LL_PEIRS_riskPref(dataIn_all, aQ, aS, b, S0, O)
 
 blockNums = unique(dataIn_all.blockNumber);
 
@@ -22,23 +22,23 @@ for iblock = 1:length(blockNums)
     choiceProb_LL(iblock, :)= NaN(1, nTrials);
     Qs                      = NaN(4, nTrials);
     Ss                      = NaN(4, nTrials);
-    UCB_s                   = NaN(4, nTrials);
-    UCB_v                   = [50 50 50 50]; %assuming each arm has already been sampled once
-        
+    PEIRS_s                 = NaN(4, nTrials);
+       
 
     for t = 1: nTrials
     
         stimL = dataIn.stim_l(t);
         stimR = dataIn.stim_r(t);
 
-        % based on choice history, update the uncertainty bonus
-        % associated with each stimulus
-        UCB_v = (c *(sqrt(2*log(t)./St)));
+        % stimulus prediction error 
+        delta_stim(t) = ( Qt(stimL) + Qt(stimR) ) / 2 - sum(Qt(1:4)) / 4;
+        PEIRS(t) = tanh(O * delta_stim(t));
 
         % softmax to determine choice
-        p(t)     = exp(b * (Qt(stimL) + UCB_v(stimL)))./...
-            (exp(b*(Qt(stimL) + UCB_v(stimL))) + exp(b* (Qt(stimR) + UCB_v(stimR))));
+        v1          = Qt(stimL) + PEIRS(t) * St(stimL);
+        v2          = Qt(stimR) + PEIRS(t) * St(stimR);
 
+        p(t)     = exp(b * v1)./(exp(b*v1) + exp(b*v2));
 
         % choice made by subject
         stimIdx(t)  = dataIn.stimulus_choice(t);
@@ -65,18 +65,11 @@ for iblock = 1:length(blockNums)
             St(stimIdx(t)) = St(stimIdx(t)) + (aS*delta_s);
             
             Qs(stimIdx(t), t) = Qt(stimIdx(t));
-            UCB_s(t, stimIdx(t)) = UCB_v(stimIdx(t));
+            PEIRS_s(t, stimIdx(t)) = PEIRS(t);
             Ss(stimIdx(t), t) = St(stimIdx(t));
 
         end
-        %[stimL stimR dataIn.stimulus_choice(t) dataIn.reward_obtained(t) Qt p(t)]
     end
-
-    %     choiceProb(choice_dir==0)=1-choiceProb(choice_dir==0);
-    %     choiceProb(iblock, :)=0.99*choiceProb(iblock, :)+0.005;
-    %     choiceProb_LL(iblock, ~isnan(choiceProb(iblock, :))) = choiceProb(iblock, ~isnan(choiceProb(iblock, :)));
-    %     % compute negative log-likelihood
-    %     NegLL(iblock) = -sum(log(choiceProb_LL(iblock, :)));
 
     choice_dir(isnan(p)) = [];
     p=0.99*p+0.005;

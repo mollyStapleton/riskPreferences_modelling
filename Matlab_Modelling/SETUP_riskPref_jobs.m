@@ -18,21 +18,21 @@ cd([base_path repo_path]);
 %-------------------------------------------------------
 % SUBJECT IDX - satisfied inclusion criteria
 %-------------------------------------------------------
-subs = [21 22 23 24 26 28 29 30 32 33 34 35 36 37,...
-    39 40 42 44 45 46 47 49 50 51 52 53 54 55 56 58];
-% subs = [29];
+% subs = [21 22 23 24 26 28 29 30 32 33 34 35 36 37,...
+%     39 40 42 44 45 46 47 49 50 51 52 53 54 55 56 58];
+subs = [21];
 %------------------------------------------------------
 % SELECT MODEL TO WORK WITH
 %--------------------------------------------------------------
 models                  = {'RW', 'RATES', 'UCB_nCount', 'UCB_spread', 'PEIRS'};
-models2run              = [4];
-nIters                  = 100;
+models2run              = [5];
+nIters                  = 10;
 %------------------------------------------------------------
 % SET REWARD DISTRIBUTION
 %-----------------------------------------------------------------
 distSplit   = 1; % whether to collapse all distributions or perform jobs separately
 dists       = {'Gaussian', 'Bimodal'};
-dists2run   = [2];
+dists2run   = [1];
 
 %-------------------------------------------------------------
 %-------------------------------------------------------------
@@ -41,11 +41,11 @@ dists2run   = [2];
 %-------------------------------------------------------------
 simulate_data           = 0;  % Simulate model fits
 simulate_model_effects  = 0;  % Simulate parameter effects on risk preferences
-model_fit_to_data       = 0;  % Fit model to existing data
-genData_plotFit         = 1;  % Generate data matrix to plot true vs fitted data
+model_fit_to_data       = 1;  % Fit model to existing data
+genData_plotFit         = 0;  % Generate data matrix to plot true vs fitted data
                               % Generate individual subject true vs fitted
                               % data plots
-plot_data_model_comp    = 1;  % Generate average plots for true vs fitted data for all subjects
+plot_data_model_comp    = 0;  % Generate average plots for true vs fitted data for all subjects
 
 %-------------------------------------------------------------
 %-------------------------------------------------------------
@@ -61,7 +61,7 @@ for imodel = 1: length(models2run)
         % used to generate simulated behaviour
         %--------------------------------------------------
         params.Q0               = 50; % FIXED PARAMETER, DO NOT CHANGE
-        params.beta             = 0.04; %softmax temperature parameter included in all models
+        params.beta             = 2.9999; %softmax temperature parameter included in all models
         if strcmpi(models{models2run(imodel)} , 'RW')
             params.alpha        = 0.1;
         elseif strcmpi(models{models2run(imodel)} , 'RATES')
@@ -71,15 +71,15 @@ for imodel = 1: length(models2run)
             params.alpha        = 0.1;
             params.c            = 1;
         elseif strcmpi(models{models2run(imodel)}, 'UCB_spread')
-            params.alphaQ       = 0.07;
-            params.alphaS       = 1;
-            params.c            = 1.72;
-            params.S0           = 6.66;
+            params.alphaQ       = 0.0013;
+            params.alphaS       = 0.4080;
+            params.c            = 0.6669;
+            params.S0           = 3.7008;
         elseif strcmpi(models{models2run(imodel)}, 'PEIRS')
-            params.S0           = 0.15;
-            params.alphaQ       = 0.25;
-            params.alphaS       = 0.15;
-            params.omega        = 0.03;
+            params.S0           = 1;
+            params.alphaQ       = 0.00035912;
+            params.alphaS       = 0.0013749;
+            params.omega        = -0.43638;
         end
     elseif simulate_model_effects
         %--------------------------------------------------
@@ -104,9 +104,9 @@ for imodel = 1: length(models2run)
             params.c            = linspace(1, 2, 20);
             params.S0           = linspace(1, 2, 20);
         elseif strcmpi(models{models2run(imodel)}, 'PEIRS')
-            params.S0           = 0.15;
-            params.alphaQ       = 0.25;
-            params.alphaS       = 0.15;
+            params.S0           = linspace(1, 2, 20);
+            params.alphaQ       = linspace(0.1, 0.5, 20);
+            params.alphaS       = linspace(0.1, 0.5, 20);
             params.omega        = 0.03;
         end
     elseif model_fit_to_data
@@ -131,12 +131,13 @@ for imodel = 1: length(models2run)
             params.c            = (0 - 2) * rand(1, nIters) + 2;
             params.S0           = (0 - 15) * rand(1, nIters) + 15;
         elseif strcmpi(models{models2run(imodel)}, 'PEIRS')
-            params.S0           = 0.15;
-            params.alphaQ       = 0.25;
-            params.alphaS       = 0.15;
-            params.omega        = 0.03;
+            params.S0           = (0 - 15) * rand(1, nIters) + 15;
+            params.alphaQ       = rand(1, nIters);
+            params.alphaS       = rand(1, nIters);
+            params.omega        = (-20 -20) * rand(1, nIters) + 20;
+            
         end
     end
-            runSelectedJobs;
+    runSelectedJobs;
 end    
 

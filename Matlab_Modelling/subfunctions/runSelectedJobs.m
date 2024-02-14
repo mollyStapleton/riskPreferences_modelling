@@ -50,11 +50,23 @@ end
 
 if model_fit_to_data
     data2save = [];
-
     %   load in relevant subject data
     cd([base_path data_path]);
     load('allTr_allSubjects.mat');
-        data2save  = table();
+    data2save  = table();
+
+    p = gcp('nocreate');
+    if ~isempty(p)
+        Nwork = p.NumWorkers;
+    else
+        Nwork = 0;
+    end
+    if Nwork ~= 4
+        delete(gcp('nocreate'))
+        %   parpool('local', 4, 'IdleTimeout', 30);
+        parpool('local', 4);
+    end
+
     for isubject = 1: length(subs)
         data2run   = allTr_allSubjects([allTr_allSubjects.pt_number == subs(isubject)], [1:10 16]);
         [best_fit_parm(isubject, :), LL(isubject), BIC(isubject)] = modelFitting_riskPref(data2run, models{models2run(imodel)}, params, dists{dists2run}, distSplit, nIters);
@@ -67,7 +79,8 @@ if model_fit_to_data
     % fitted params variable will be of different lengths for each model
     % makes more generalisable for future plotting scripts
     data2save.Properties.VariableNames = {'ptIdx', 'model', 'dist', 'fittedParams', 'LL', 'BIC'};
-    saveTablename = [models{models2run} '_subjectLvl_paramFits_' dists{dists2run} '.mat'];
+    saveTablename = [models{models2run} '_PT_' num2str(subs(isubject)) '_paramFits_' dists{dists2run} '.mat'];
+%     saveTablename = [models{models2run} '_subjectLvl_paramFits_' dists{dists2run} '.mat'];
     cd([base_path save_path '\model_fits\' models{models2run}]);
     save( saveTablename, 'data2save');
 %     delete(gcp('nocreate'));
@@ -82,7 +95,8 @@ if genData_plotFit
     cd([base_path data_path]);
     load('allTr_allSubjects.mat');
     cd([base_path save_path '\model_fits\' models{models2run}]);
-    load([models{models2run} '_subjectLvl_paramFits_' dists{dists2run} '.mat'])
+%     load([models{models2run} '_subjectLvl_paramFits_' dists{dists2run} '.mat'])
+    load([models{models2run} '_PT_' num2str(subs) '_paramFits_' dists{dists2run} '.mat']);
     %load in previously generated parameter fits
     dataFilename = ['dataPlot_truevsfit_' models{models2run} '_' dists{dists2run} '.mat'];
     if ~exist(dataFilename)
