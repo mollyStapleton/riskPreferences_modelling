@@ -34,7 +34,6 @@ end
     UB = [1 1 3 15 20];
 
     % for PEIRS model alphaQ should be greater than alphaS
-
     nonlcon = @(x) constraint_LR(x(1), x(2));
 
     % return set of parameters to be fit (alpha, beta, c for UCB_nCount model)
@@ -48,13 +47,11 @@ end
     options = optimoptions(@fmincon, 'StepTolerance', 1e-6,...
         'ConstraintTolerance', 1e-6, 'MaxFunEvals',feval(1),'MaxIter',feval(2),...
         'Display','none');
-%     options = optimset('MaxFunEvals',feval(1),'MaxIter',feval(2), 'TolFun', 1e-6,...
-%         'TolX', 1e-6, 'Display','iter');
 
     for iter = 1:nIters
         %     parfor iter = 1:nIters
 %         [Xfit_grid(iter,:), NegLL_grid(iter)] = fminsearchbnd(obFunc, X0(iter,:), LB, UB, options);
-        [Xfit_grid(iter,:), NegLL_grid(iter, 1)] = fmincon(obFunc,X0(iter,:),[],[],[],[],LB,UB, nonlcon, options);
+        [Xfit_grid(iter,:), NegLL_grid(iter, 1)] = fmincon(obFunc,X0(iter,:),[],[],[],[],LB,UB, [], options);
     end
 
     [~,best] = min(NegLL_grid);

@@ -136,8 +136,8 @@ axis square
 lstyle = {'--', '-', '--', '-'};
 for istim = 1:4
     for ibin = 1: length(bin)
-        meanQ(istim, ibin) = nanmean(nanmean(Qall{istim}(bin(ibin): (bin(ibin) + binSize -1))));
-        semQ(istim, ibin) = nanstd(Qall{istim}(bin(ibin): (bin(ibin) + binSize -1)))...
+        meanQ(istim, ibin) = nanmean(nanmean(Qall{istim}(:, bin(ibin): (bin(ibin) + binSize -1))));
+        semQ(istim, ibin) = nanstd(nanstd(Qall{istim}(:, bin(ibin): (bin(ibin) + binSize -1))))...
         /sqrt(length((bin(ibin): (bin(ibin) + binSize -1))));
     
     end
@@ -215,8 +215,8 @@ axis square
 lstyle = {'--', '-', '--', '-'};
 for istim = 1:4
     for ibin = 1: length(bin)
-        meanS(istim, ibin) = nanmean(nanmean(Sall{istim}(bin(ibin): (bin(ibin) + binSize -1))));
-        semS(istim, ibin) = nanstd(Sall{istim}(bin(ibin): (bin(ibin) + binSize -1)))...
+        meanS(istim, ibin) = nanmean(nanmean(Sall{istim}(:, bin(ibin): (bin(ibin) + binSize -1))));
+        semS(istim, ibin) = nanstd(nanstd(Sall{istim}(:, bin(ibin): (bin(ibin) + binSize -1))))...
         /sqrt(length((bin(ibin): (bin(ibin) + binSize -1))));
     
     end

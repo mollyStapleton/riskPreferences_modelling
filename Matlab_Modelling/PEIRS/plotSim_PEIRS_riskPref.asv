@@ -76,7 +76,7 @@ set(gca, 'XTick', []);
 hold on 
 ylabel('\bfP(High)');
 plot([0 6], [0.5 0.5], 'k--');
-legend({'HHSafe-LLSafe', '', 'HHSafe-LLRisky','', 'HHRisky-LLSafe','', 'HHRisky-LLRisky',  ''}, 'location', [0.31 0.47 0.1 0.1]);
+legend({'HHSafe-LLSafe', '', 'HHSafe-LLRisky','', 'HHRisky-LLSafe','', 'HHRisky-LLRisky',  ''}, 'location', [0.32 0.47 0.1 0.1]);
 title('\fontsize{12} \bfAccuracy');
 
 %--------------------------------------------------------------------------
@@ -139,8 +139,8 @@ axis square
 lstyle = {'--', '-', '--', '-'};
 for istim = 1:4
     for ibin = 1: length(bin)
-        meanQ(istim, ibin) = nanmean(nanmean(Qall{istim}(:, bin(ibin): (bin(ibin) + binSize -1))));
-        semQ(istim, ibin) = nanstd(nanstd(Qall{istim}(:, bin(ibin): (bin(ibin) + binSize -1))))...
+        meanQ(istim, ibin) = nanmean(nanmean(Qall{istim}(bin(ibin): (bin(ibin) + binSize -1))));
+        semQ(istim, ibin) = nanstd(Qall{istim}(bin(ibin): (bin(ibin) + binSize -1)))...
         /sqrt(length((bin(ibin): (bin(ibin) + binSize -1))));
     
     end
@@ -151,7 +151,7 @@ xlim([0 6]);
 ylabel('\bfAverage Q');
 xlabel('\bfTrial Bin No.');
 set(gca, 'FontName', 'Arial');
-legend({'LL-Safe', 'LL-Risky', 'HH-Safe', 'HH-Risky'}, 'location', [0.15 0.47 0.1 0.1]);
+legend({'LL-Safe', 'LL-Risky', 'HH-Safe', 'HH-Risky'}, 'location', [0.05 0.44 0.1 0.1]);
 
 %--------------------------------------------------------------------------
 % S AVERAGE
@@ -188,8 +188,8 @@ axis square
 lstyle = {'--', '-', '--', '-'};
 for istim = 1:4
     for ibin = 1: length(bin)
-        meanS(istim, ibin) = nanmean(nanmean(Sall{istim}(:, bin(ibin): (bin(ibin) + binSize -1))));
-        semS(istim, ibin) = nanstd(nanstd(Sall{istim}(:, bin(ibin): (bin(ibin) + binSize -1))))...
+        meanS(istim, ibin) = nanmean(nanmean(Sall{istim}(bin(ibin): (bin(ibin) + binSize -1))));
+        semS(istim, ibin) = nanstd(Sall{istim}(bin(ibin): (bin(ibin) + binSize -1)))...
         /sqrt(length((bin(ibin): (bin(ibin) + binSize -1))));
     
     end
@@ -232,8 +232,8 @@ axis square
 lstyle = {'--', '-', '--', '-'};
 for istim = 1:4
     for ibin = 1: length(bin)
-        meanPEIRS(istim, ibin) = nanmean(nanmean(PEIRS_all{istim}(:, bin(ibin): (bin(ibin) + binSize -1))));
-        semPEIRS(istim, ibin) = nanstd(nanstd(PEIRS_all{istim}(:, bin(ibin): (bin(ibin) + binSize -1))))...
+        meanPEIRS(istim, ibin) = nanmean(nanmean(PEIRS_all{istim}(bin(ibin): (bin(ibin) + binSize -1))));
+        semPEIRS(istim, ibin) = nanstd(PEIRS_all{istim}(bin(ibin): (bin(ibin) + binSize -1)))...
         /sqrt(length((bin(ibin): (bin(ibin) + binSize -1))));
     
     end

@@ -20,28 +20,28 @@ cd([base_path repo_path]);
 %-------------------------------------------------------
 % subs = [21 22 23 24 26 28 29 30 32 33 34 35 36 37,...
 %     39 40 42 44 45 46 47 49 50 51 52 53 54 55 56 58];
-subs = [21];
+subs = [23];
 %------------------------------------------------------
 % SELECT MODEL TO WORK WITH
 %--------------------------------------------------------------
 models                  = {'RW', 'RATES', 'UCB_nCount', 'UCB_spread', 'PEIRS'};
 models2run              = [5];
-nIters                  = 10;
+nIters                  = 1000;
 %------------------------------------------------------------
 % SET REWARD DISTRIBUTION
 %-----------------------------------------------------------------
 distSplit   = 1; % whether to collapse all distributions or perform jobs separately
 dists       = {'Gaussian', 'Bimodal'};
-dists2run   = [1];
+dists2run   = [2];
 
 %-------------------------------------------------------------
 %-------------------------------------------------------------
 % SELECT JOB TO RUN
 %-------------------------------------------------------------------
 %-------------------------------------------------------------
-simulate_data           = 0;  % Simulate model fits
+simulate_data           = 1;  % Simulate model fits
 simulate_model_effects  = 0;  % Simulate parameter effects on risk preferences
-model_fit_to_data       = 1;  % Fit model to existing data
+model_fit_to_data       = 0;  % Fit model to existing data
 genData_plotFit         = 0;  % Generate data matrix to plot true vs fitted data
                               % Generate individual subject true vs fitted
                               % data plots
@@ -61,7 +61,7 @@ for imodel = 1: length(models2run)
         % used to generate simulated behaviour
         %--------------------------------------------------
         params.Q0               = 50; % FIXED PARAMETER, DO NOT CHANGE
-        params.beta             = 2.9999; %softmax temperature parameter included in all models
+        params.beta             = 2.9990; %softmax temperature parameter included in all models
         if strcmpi(models{models2run(imodel)} , 'RW')
             params.alpha        = 0.1;
         elseif strcmpi(models{models2run(imodel)} , 'RATES')
@@ -76,10 +76,10 @@ for imodel = 1: length(models2run)
             params.c            = 0.6669;
             params.S0           = 3.7008;
         elseif strcmpi(models{models2run(imodel)}, 'PEIRS')
-            params.S0           = 1;
-            params.alphaQ       = 0.00035912;
-            params.alphaS       = 0.0013749;
-            params.omega        = -0.43638;
+            params.S0           = 1.0008;
+            params.alphaQ       = 0.0010;
+            params.alphaS       = 0.0024;
+            params.omega        = -0.4457;
         end
     elseif simulate_model_effects
         %--------------------------------------------------
