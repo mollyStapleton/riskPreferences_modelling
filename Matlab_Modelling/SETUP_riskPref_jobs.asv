@@ -25,14 +25,14 @@ subs = [23];
 % SELECT MODEL TO WORK WITH
 %--------------------------------------------------------------
 models                  = {'RW', 'RATES', 'UCB_nCount', 'UCB_spread', 'PEIRS'};
-models2run              = [5];
-nIters                  = 1000;
+models2run              = [1];
+nIters                  = 5;
 %------------------------------------------------------------
 % SET REWARD DISTRIBUTION
 %-----------------------------------------------------------------
-distSplit   = 1; % whether to collapse all distributions or perform jobs separately
+distSplit   = 0; % whether to collapse all distributions or perform jobs separately
 dists       = {'Gaussian', 'Bimodal'};
-dists2run   = [2];
+dists2run   = [1 2];
 
 %-------------------------------------------------------------
 %-------------------------------------------------------------
@@ -60,8 +60,8 @@ for imodel = 1: length(models2run)
         % SINGLE PARAMETER VALUE TO BE ENTERED
         % used to generate simulated behaviour
         %--------------------------------------------------
-        params.Q0               = 0; % FIXED PARAMETER, DO NOT CHANGE
-        params.beta             = 0.1464; %softmax temperature parameter included in all models
+        params.Q0               = 50; % FIXED PARAMETER, DO NOT CHANGE
+        params.beta             = 2.9990; %softmax temperature parameter included in all models
         if strcmpi(models{models2run(imodel)} , 'RW')
             params.alpha        = 0.1;
         elseif strcmpi(models{models2run(imodel)} , 'RATES')
@@ -76,10 +76,10 @@ for imodel = 1: length(models2run)
             params.c            = 0.6669;
             params.S0           = 3.7008;
         elseif strcmpi(models{models2run(imodel)}, 'PEIRS')
-            params.S0           = 1.0036;
-            params.alphaQ       = 0.0217;
-            params.alphaS       = 0.8645;
-            params.omega        = -0.0319;
+            params.S0           = 1.0008;
+            params.alphaQ       = 0.0010;
+            params.alphaS       = 0.0024;
+            params.omega        = -0.4457;
         end
     elseif simulate_model_effects
         %--------------------------------------------------

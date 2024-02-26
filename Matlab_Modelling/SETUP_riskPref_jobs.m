@@ -20,28 +20,28 @@ cd([base_path repo_path]);
 %-------------------------------------------------------
 % subs = [21 22 23 24 26 28 29 30 32 33 34 35 36 37,...
 %     39 40 42 44 45 46 47 49 50 51 52 53 54 55 56 58];
-subs = [23];
+subs = [23 24];
 %------------------------------------------------------
 % SELECT MODEL TO WORK WITH
 %--------------------------------------------------------------
 models                  = {'RW', 'RATES', 'UCB_nCount', 'UCB_spread', 'PEIRS'};
-models2run              = [5];
-nIters                  = 1000;
+models2run              = [1];
+nIters                  = 5;
 %------------------------------------------------------------
 % SET REWARD DISTRIBUTION
 %-----------------------------------------------------------------
-distSplit   = 1; % whether to collapse all distributions or perform jobs separately
+distSplit   = 0; % whether to collapse all distributions or perform jobs separately
 dists       = {'Gaussian', 'Bimodal'};
-dists2run   = [2];
+dists2run   = [1 2];
 
 %-------------------------------------------------------------
 %-------------------------------------------------------------
 % SELECT JOB TO RUN
 %-------------------------------------------------------------------
 %-------------------------------------------------------------
-simulate_data           = 1;  % Simulate model fits
+simulate_data           = 0;  % Simulate model fits
 simulate_model_effects  = 0;  % Simulate parameter effects on risk preferences
-model_fit_to_data       = 0;  % Fit model to existing data
+model_fit_to_data       = 1;  % Fit model to existing data
 genData_plotFit         = 0;  % Generate data matrix to plot true vs fitted data
                               % Generate individual subject true vs fitted
                               % data plots

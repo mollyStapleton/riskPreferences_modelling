@@ -1,7 +1,7 @@
-function [best_fit_parm, LL, BIC] = modelFitting_riskPref(dataIn, model, params, dist, distSplit, nIters)
+function [best_fit_parm, LL, BIC] = modelFitting_riskPref(dataIn, model, params, dist, dists2run, nIters)
 
 if strcmpi(model, 'RW')
-        [best_fit_parm, LL, BIC] = mdlFit_RW_riskPref(dataIn, params, dist, distSplit, nIters);
+        [best_fit_parm, LL, BIC] = mdlFit_RW_riskPref(dataIn, params, dist, dists2run, nIters);
 end
 
 if strcmpi(model, 'RATES')

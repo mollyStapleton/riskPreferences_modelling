@@ -28,6 +28,9 @@ elseif strcmpi(model, 'UCB_nCount')
 elseif strcmpi(model, 'UCB_spread')
     ba = boxchart([paramFit.fittedParams], 'BoxFaceColor', col2plot{1});
     set(gca, 'XTickLabel', {'\alphaQ', '\alphaS',  '\beta', 'c', 'S0'})
+elseif strcmpi(model, 'PEIRS')
+    ba = boxchart([paramFit.fittedParams], 'BoxFaceColor', col2plot{1});
+    set(gca, 'XTickLabel', {'\alphaQ', '\alphaS',  '\beta', 'S0', '\omega'})
 end
 
 for ic = 1: size(paramFit.fittedParams, 2)   
