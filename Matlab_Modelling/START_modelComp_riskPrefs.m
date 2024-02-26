@@ -85,6 +85,34 @@ for idist = 1: length(dists)
     title(dists(idist), 'fontsize', 16);
     set(gca, 'FontName', 'Arial');
     
+    % plot BIC change from RATES model 
+    figure(2);
+    model_comp_idx = [1 3 4 5];
+    for icomp = 1: length(model_comp_idx)
+
+        BIC_comp{idist}(:, icomp) = table2array(BIC_plot{idist}(:, model_comp_idx(icomp)))...
+            - table2array(BIC_plot{idist}(:, 2));
+
+        if strcmp(dists(idist), 'Gaussian')
+            subplot(1, 2, 1);
+            axis square
+        else
+            subplot(1, 2, 2);
+            axis square
+        end
+        
+        hold on 
+        plot(BIC_comp{idist}(:, icomp), icomp, 'o', 'MarkerFaceColor', col2plot{1},...
+            'MarkerEdgeColor', [0 0 0], 'MarkerSize', 7);
+    end
+    ylim([0 5]);
+    hold on 
+    plot([0 0], [0 5], 'k--', 'linew', 1.5);
+    set(gca, 'YTick', [1:4]);
+    set(gca, 'YTickLabel', {'\bfRW', '\bfUCB_1', '\bfUCB_2', '\bfPEIRS'});
+    xlabel('\bf \Delta BIC');
+    title(dists(idist), 'fontsize', 16);
+    set(gca, 'FontName', 'Arial');
 
 end
 

@@ -55,6 +55,18 @@ if model_fit_to_data
     cd([base_path data_path]);
     load('allTr_allSubjects.mat');
 
+    p = gcp('nocreate');
+    if ~isempty(p)
+        Nwork = p.NumWorkers;
+    else
+        Nwork = 0;
+    end
+    if Nwork ~= 4
+        delete(gcp('nocreate'))
+        %   parpool('local', 4, 'IdleTimeout', 30);
+        parpool('local', 4);
+    end
+
     for idist = 1: length(dists2run)
         data2save  = table();
         %load in distribution relevant data 
@@ -62,21 +74,8 @@ if model_fit_to_data
             distIdx = 1;
         else
             distIdx = 2;
-        end
-     
-    
-    %     p = gcp('nocreate');
-    %     if ~isempty(p)
-    %         Nwork = p.NumWorkers;
-    %     else
-    %         Nwork = 0;
-    %     end
-    %     if Nwork ~= 4
-    %         delete(gcp('nocreate'))
-    %         %   parpool('local', 4, 'IdleTimeout', 30);
-    %         parpool('local', 4);
-    %     end
-    
+        end   
+
         for isubject = 1: length(subs)
             data2run    = [];
             trIdx       = find(allTr_allSubjects.distType == distIdx & allTr_allSubjects.pt_number == subs(isubject));
