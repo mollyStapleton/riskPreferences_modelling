@@ -53,20 +53,22 @@ end
 h3 = axes('Position', [0.07 0.05 0.125 0.4]);
 h4 = axes('Position', [0.22 0.05 0.125 0.4]);
 hold on
+
+dataIn.binnedFit = cell2mat(dataIn.binnedFit); dataIn.binnedTrue = cell2mat(dataIn.binnedTrue);
 for icnd = 1:2
     if icnd == 1
         axes(h3);
-        hold on
+        hold on 
     else
         axes(h4);
-        hold on
+        hold on        
     end
 
-    plot(dataIn.binnedTrue{icnd}, 'color', col2plot{icnd}, 'linew', 1.2);
-    plot(dataIn.binnedFit{icnd}, 'color', col2plot_fit{icnd}, 'linew', 1.2);
-    plot(dataIn.binnedTrue{icnd}, 'o', 'MarkerFaceColor', col2plot{icnd},...
+    plot(dataIn.binnedTrue(icnd, :), 'color', col2plot{icnd}, 'linew', 1.2);
+    plot(dataIn.binnedFit(icnd, :), 'color', col2plot_fit{icnd}, 'linew', 1.2);
+    plot(dataIn.binnedTrue(icnd, :), 'o', 'MarkerFaceColor', col2plot{icnd},...
         'MarkerEdgeColor', col2plot{icnd}, 'linew', 1.2);
-    plot(dataIn.binnedFit{icnd}, 'o', 'MarkerFaceColor', col2plot_fit{icnd},...
+    plot(dataIn.binnedFit(icnd, :), 'o', 'MarkerFaceColor', col2plot_fit{icnd},...
         'MarkerEdgeColor', col2plot_fit{icnd}, 'linew', 1.2);
     ylim([0 1]);
     hold on
@@ -121,6 +123,7 @@ set(gca, 'FontSize', 8);
 %------------------------------------------------------------------------------
 
 h6 = axes('Position', [0.3 0.05 0.4 0.4]);
+dataIn.accTrue_binned = cell2mat(dataIn.accTrue_binned); dataIn.accFit_binned = cell2mat(dataIn.accFit_binned);
 axis square
 for istim = 1:4
     

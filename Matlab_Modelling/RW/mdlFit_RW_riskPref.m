@@ -52,6 +52,7 @@ function [best_fit_parm, LL, BIC] = mdlFit_RW_riskPref(dataIn_all, params, dist,
     NegLL = NegLL_grid(best);
     
     LL = -NegLL;
+    % nParams * log(nObs) + 2 * NegLL
     BIC = length(X0(1,:)) * log(size(dataIn_all, 1)) + 2*NegLL;
 end
 

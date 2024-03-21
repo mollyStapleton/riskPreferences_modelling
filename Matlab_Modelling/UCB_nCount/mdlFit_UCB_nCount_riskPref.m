@@ -1,4 +1,4 @@
-function [best_fit_parm, LL, BIC] = mdlFit_UCB_nCount_riskPref(dataIn_all, params, dist, distSplit, nIters)
+function [best_fit_parm, LL, BIC] = mdlFit_UCB_nCount_riskPref(dataIn_all, params, dist, dists2run, nIters)
 
 %-------------------------------------------------------------------
 %%% RW model fit to risk preferences 
@@ -9,31 +9,6 @@ function [best_fit_parm, LL, BIC] = mdlFit_UCB_nCount_riskPref(dataIn_all, param
 %%% 3) Choice made 
 %%% 4) reward obtained
 %--------------------------------------------------------------------------
-p = gcp('nocreate');
-if ~isempty(p)
-    Nwork = p.NumWorkers;
-else
-    Nwork = 0;
-end
-if Nwork ~= 4
-  delete(gcp('nocreate'))
-%   parpool('local', 4, 'IdleTimeout', 30);
-  parpool('local', 4);
-end
-
-
-% if model fitting to be split by reward distribution, identify
-% distribution specific trials
-if distSplit 
-    if strcmpi(dist, 'Gaussian')
-        distType = 1; 
-    else 
-        distType = 2;
-    end
-
-    distIdx = find(dataIn_all.distType == distType);
-    dataIn_all  = dataIn_all(distIdx, :);
-end 
 
     % objective function uses real data to fit using parameters alpha and beta
     % returned in X0

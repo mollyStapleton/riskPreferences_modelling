@@ -2,19 +2,20 @@ function [NegLL,choiceProb, choice_dir, Qs] = LL_PEIRS_riskPref(dataIn_all, aQ, 
 
 blockNums = unique(dataIn_all.blockNumber);
 
-% DETERMINE STARTING VALUE BASED ON REWARD DISTRIBUTIONS
-distIdx = dataIn_all.distType(1);
-if distIdx == 1
-    Qstart = 50;
-else 
-    Qstart = 0;
-end
 
 for iblock = 1:length(blockNums)
     
     dataIn                  = [];
     dataIn                  = dataIn_all(dataIn_all.blockNumber == blockNums(iblock), :);
     nTrials                 = size(dataIn, 1);
+
+    distIdx = dataIn_all.distType(1);
+    if distIdx == 1
+        Qstart = 50;
+    else
+        Qstart = 0;
+    end
+
     Qt                      = [Qstart Qstart Qstart Qstart]*0+Qstart;
     St                      = [S0 S0 S0 S0];
     choice_dir              = zeros(1, nTrials);

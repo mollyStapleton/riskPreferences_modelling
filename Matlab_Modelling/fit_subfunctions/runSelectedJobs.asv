@@ -55,48 +55,64 @@ if model_fit_to_data
     cd([base_path data_path]);
     load('allTr_allSubjects.mat');
 
-    p = gcp('nocreate');
-    if ~isempty(p)
-        Nwork = p.NumWorkers;
-    else
-        Nwork = 0;
-    end
-    if Nwork ~= 4
-        delete(gcp('nocreate'))
-        %   parpool('local', 4, 'IdleTimeout', 30);
-        parpool('local', 4);
-    end
+%     p = gcp('nocreate');
+%     if ~isempty(p)
+%         Nwork = p.NumWorkers;
+%     else
+%         Nwork = 0;
+%     end
+%     if Nwork ~= 4
+%         delete(gcp('nocreate'))
+%         %   parpool('local', 4, 'IdleTimeout', 30);
+%         parpool('local', 4);
+%     end
+    data2save  = table();
 
-    for idist = 1: length(dists2run)
-        data2save  = table();
-        %load in distribution relevant data 
-        if strcmpi(dists{dists2run(idist)}, 'Gaussian')
-            distIdx = 1;
-        else
-            distIdx = 2;
-        end   
+    if distSplit == 0
 
         for isubject = 1: length(subs)
-            data2run    = [];
-            trIdx       = find(allTr_allSubjects.distType == distIdx & allTr_allSubjects.pt_number == subs(isubject));
+            data2run    = []; 
+            trIdx       = find(allTr_allSubjects.pt_number == subs(isubject));
             data2run    = allTr_allSubjects(trIdx, [1:10 16]);
             [best_fit_parm(isubject, :), LL(isubject), BIC(isubject)] = modelFitting_riskPref(data2run, models{models2run(imodel)}, params, dists, dists2run, nIters);
-%             [best_fit_parm, LL, BIC] = modelFitting_riskPref(data2run, models{models2run(imodel)}, params, dists, dists2run, nIters);
+            data2save(isubject, :) = [subs(isubject) models{models2run(imodel)},...
+                {best_fit_parm(isubject, :)} LL(isubject) BIC(isubject)];
+        end
+
+        saveTablename = [models{models2run} '_subjectLvl_joint_paramFit.mat'];
+        data2save.Properties.VariableNames = {'ptIdx', 'model','fittedParams', 'LL', 'BIC'};
+        
+    else 
+
+        for idist = 1: length(dists2run)
+            
+            %load in distribution relevant data 
+            
+                if strcmpi(dists{dists2run(idist)}, 'Gaussian')
+                    distIdx = 1;
+                else
+                    distIdx = 2;
+                end   
+         for isubject = 1: length(subs)
+            data2run    = []; 
+            trIdx       = find(allTr_allSubject.distType == distIdx & allTr_allSubjects.pt_number == subs(isubject));
+            data2run    = allTr_allSubjects(trIdx, [1:10 16]);
+            [best_fit_parm(isubject, :), LL(isubject), BIC(isubject)] = modelFitting_riskPref(data2run, models{models2run(imodel)}, params, dists, dists2run, nIters);
+            %             [best_fit_parm, LL, BIC] = modelFitting_riskPref(data2run, models{models2run(imodel)}, params, dists, dists2run, nIters);
             data2save(isubject, :) = [subs(isubject) models{models2run(imodel)},...
                 dists{dists2run(idist)} {best_fit_parm(isubject, :)} LL(isubject) BIC(isubject)];
+         end
+
+            saveTablename = [models{models2run} '_subjectLvl_paramFit_' dists{dists2run(idist)} '.mat'];
+            data2save.Properties.VariableNames = {'ptIdx', 'model', 'dist', 'fittedParams', 'LL', 'BIC'};
         end
-    
-    %     delete(gcp('nocreate'));
-        % fitted params variable will be of different lengths for each model
-        % makes more generalisable for future plotting scripts
-        data2save.Properties.VariableNames = {'ptIdx', 'model', 'dist', 'fittedParams', 'LL', 'BIC'};
-    %     saveTablename = [models{models2run} '_PT_' num2str(subs(isubject)) '_paramFits_' dists{dists2run} '.mat'];
-        saveTablename = [models{models2run} '_subjectLvl_joint_paramFits_' dists{dists2run(idist)} '.mat'];
-        cd([base_path save_path '\model_fits\' models{models2run}]);
-        save( saveTablename, 'data2save');
-    %     delete(gcp('nocreate'));
 
     end
+
+        
+        cd([base_path save_path '\model_fits\' models{models2run}]);
+        save( saveTablename, 'data2save');
+
 end
 
 %--------------------------------------------------------------------------
@@ -108,29 +124,47 @@ if genData_plotFit
     cd([base_path data_path]);
     load('allTr_allSubjects.mat');
     cd([base_path save_path '\model_fits\' models{models2run}]);
-    load([models{models2run} '_subjectLvl_paramFits_' dists{dists2run} '.mat'])
-%     load([models{models2run} '_PT_' num2str(subs) '_paramFits_' dists{dists2run} '.mat']);
-    %load in previously generated parameter fits
-    dataFilename = ['dataPlot_truevsfit_' models{models2run} '_' dists{dists2run} '.mat'];
+    if dists2run ~= 3
+        load([models{models2run} '_subjectLvl_paramFits_' dists{dists2run} '.mat']);
+        dataFilename = ['dataPlot_truevsfit_' models{models2run} '_' dists{dists2run} '.mat'];
+    else
+        load([models{models2run} '_subjectLvl_joint_paramFit.mat']);
+        dataFilename = ['dataPlot_truevsfit_' models{models2run} '_jointParamFit.mat'];
+      
+    end
+
     if exist(dataFilename)
+
         plotData = table();
+
         for isubject = 1: length(subs)
 
             trueData   = allTr_allSubjects([allTr_allSubjects.pt_number == subs(isubject)], :);
             paramFit    = data2save(data2save.ptIdx == subs(isubject), :);
             clf;
-            [meanTrue(isubject, :), meanFit(isubject, :), binnedTrue(isubject, :), binnedFit(isubject, :)...
-                meanAccTrue(isubject, :), meanAccFit(isubject, :), accTrue_binned{isubject}, accFit_binned{isubject}]...
-                = genData_riskPref_modelComp(trueData, paramFit, models{models2run}, dists{dists2run});
             
-            plotData(isubject, :) = [subs(isubject), models{models2run(imodel)}...
-                                    dists{dists2run}, {{meanTrue(isubject, :)}}, {{meanFit(isubject, :)}},...
-                                    cell2mat(binnedTrue(isubject, :)'), cell2mat(binnedFit(isubject, :)'),...
-                                    {{meanAccTrue(isubject, :)}}, {{meanAccFit(isubject, :)}},...
-                                    cell2mat(accTrue_binned(isubject)), cell2mat(accFit_binned(isubject))];
+            data2plot(isubject) = genData_riskPref_modelComp(trueData, paramFit, models{models2run}, dists{dists2run});
 
+            if dists2run == 3
+                tmpData = table();
+                nDist   = 2;
+                distIdx = [1 2];
+            else
+                nDist   = 1;
+                distIdx = dists2run;
+            end
+            for idist = 1:nDist
+                tmpData(idist, :) = [subs(isubject), models{models2run(imodel)}...
+                    distIdx(idist), {data2plot(isubject).meanTrue(idist, :)}...
+                    {data2plot(isubject).meanFit(idist, :)}, {data2plot(isubject).binnedTrue{idist}}...
+                    {data2plot(isubject).binnedFit{idist}}, {data2plot(isubject).accTrue(idist, :)}...
+                    {data2plot(isubject).accFit(idist, :)}, {data2plot(isubject).accTrue_binned{idist}}...
+                    {data2plot(isubject).accFit_binned{idist}}];
+            end
+            
+            plotData = [plotData; tmpData];
             cd([base_path save_path '\model_fits\' models{models2run} '\subjectLvl\' dists{dists2run}]);
-            saveFigname = ['PT_' num2str(subs(isubject))];
+            saveFigname = ['PT_' num2str(subs(isubject)) '_jointParamFit'];
             print(saveFigname, '-dpng');
         end
 
@@ -154,16 +188,28 @@ if plot_data_model_comp
 
     % load in fitted parameters
     cd([base_path save_path '\model_fits\' models{models2run}]);
-    load([models{models2run} '_subjectLvl_paramFits_' dists{dists2run} '.mat']);
+    if dists2run ~= 3
+        load([models{models2run} '_subjectLvl_paramFits_' dists{dists2run} '.mat']);
+        load(['dataPlot_truevsfit_' models{models2run} '_' dists{dists2run} '.mat']);
+        distIdx = dists2run;
+   
+    else
+        load([models{models2run} '_subjectLvl_joint_paramFit.mat']);
+        load(['dataPlot_truevsfit_' models{models2run} '_Joint.mat']);
+        distIdx = [1 2]
+%         paramFits = data2save;
+%         plotFit_riskPref_joint(plotData, paramFits, models{models2run}, dists{dists2run});
+    end
 
-    % load in data: 1) true data and 2) generated using fitted parameters
-    % generated using
-    dataFilename = ['dataPlot_truevsfit_' models{models2run} '_' dists{dists2run} '.mat'];
-    load(dataFilename);
+    
     paramFits = data2save;
 
-    plotFit_riskPref(plotData, paramFits, models{models2run}, dists{dists2run});
-
+    for idist = 1: length(distIdx)
+      data2plot = [];
+      data2plot = plotData(plotData.dist == distIdx(idist), :);
+        plotFit_riskPref(plotData, paramFits, models{models2run}, dists{distIdx(idist)});
+    end
+        
     figSavename_1 = [models{models2run} '_' dists{dists2run} '_modelFit_riskPref'];
     figure(1);
     print(figSavename_1, '-dpng');

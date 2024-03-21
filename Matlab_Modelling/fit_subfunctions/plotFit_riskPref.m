@@ -1,4 +1,4 @@
-function plotFit_riskPref(dataIn, paramFit, model, dist)
+function plotFit_riskPref(dataIn, paramFit, model, dist, fitType)
 
 if strcmp(dist, 'Gaussian')
     col2plot = {[0.83 0.71 0.98], [0.62 0.35 0.99]};
@@ -9,28 +9,45 @@ else
 end
 col2plot_fit = {[0.7 0.7 0.7], [0 0 0]};
 CFit =  [colormap(cbrewer2('Greys', 40))];
+
+
 figure(1);
 clf;
 % set(gcf, 'Position', [2.0226e+03 -50.2000 1.4568e+03 728]);
 set(gcf, 'Position', [-11.8000 20.2000 1.5344e+03 750.4000]);
+
+h10 = axes('position', [0.04 0.8 0.2 0.15])
+axis square
+text2plot = {['\bfModel: ' '\rm' paramFit.model{1}], ['\bfReward Distribution: ' '\rm' dist], ['\bfFit Type: ' '\rm' fitType],...
+    ['\bfLL: ' '\rm' num2str(nanmean(paramFit.LL), '%.2f') ' \pm ' num2str(nanstd(paramFit.LL)./sqrt(length(paramFit.LL)), '%.2f')],...
+    ['\bfBIC: ' '\rm' num2str(nanmean(paramFit.BIC), '%.2f') ' \pm ' num2str(nanstd(paramFit.BIC)./sqrt(length(paramFit.BIC)), '%.2f')]}
+hold on
+text(0, 0.5, text2plot, 'FontSize', 12, 'FontName', 'Arial');
+set(gca, 'Visible', 'off');
+
 h1 = axes('Position', [0.001 0.35 0.4 0.4]);
 axis square
 hold on 
 if strcmpi(model, 'RW')
-    ba = boxchart([paramFit.alpha paramFit.beta], 'BoxFaceColor', col2plot{1});
+    ba = boxchart([paramFit.fittedParams], 'BoxFaceColor', col2plot{1});
     set(gca, 'XTickLabel', {'\alpha', '\beta'})
+    ylim([0 3]);
 elseif strcmpi(model, 'RATES')
     ba = boxchart([paramFit.fittedParams], 'BoxFaceColor', col2plot{1});
     set(gca, 'XTickLabel', {'\alphaPos', '\alphaNeg', '\beta'});
+    ylim([0 3]);
 elseif strcmpi(model, 'UCB_nCount')
     ba = boxchart([paramFit.fittedParams], 'BoxFaceColor', col2plot{1});
     set(gca, 'XTickLabel', {'\alpha', '\beta', 'c'})
+    ylim([-1 20]);
 elseif strcmpi(model, 'UCB_spread')
     ba = boxchart([paramFit.fittedParams], 'BoxFaceColor', col2plot{1});
     set(gca, 'XTickLabel', {'\alphaQ', '\alphaS',  '\beta', 'c', 'S0'})
+    ylim([-1 20]);
 elseif strcmpi(model, 'PEIRS')
     ba = boxchart([paramFit.fittedParams], 'BoxFaceColor', col2plot{1});
     set(gca, 'XTickLabel', {'\alphaQ', '\alphaS',  '\beta', 'S0', '\omega'})
+    ylim([-1 20]);
 end
 
 for ic = 1: size(paramFit.fittedParams, 2)   
@@ -41,7 +58,7 @@ plot(xscatt_coord, paramFit.fittedParams, '.', 'Color', col2plot{2}, 'MarkerSize
 ylabel('Fitted Parameter Values');
 title('Descriptives');
 set(gca, 'FontName', 'Arial');
-ylim([-1 20]);
+
 
 %--------------------------------------------------------------------------
 %%% PLOT P(RISKY) OVERALL: FIT VS TRUE
@@ -66,10 +83,10 @@ for icnd = 1:2
 
     for itype = 1:2 
         if itype == 1 
-            meanData = cell2mat(dataIn.meanTrue);
+            meanData = dataIn.meanTrue;
             colPlot  = col2plot;
         else 
-            meanData = cell2mat(dataIn.meanFit);
+            meanData =  dataIn.meanFit;
             colPlot  = col2plot_fit;
         end
 
@@ -156,11 +173,11 @@ fitX    = [1 2.5 4 5.5];
 for istim = 1:4
     for itype = 1:2
         if itype == 1
-            tmpData = cell2mat([dataIn.meanAccTrue]);
+            tmpData = dataIn.meanAccTrue;
             colFil   = trueCol;
             x2plot = trueX;
         else
-            tmpData = cell2mat([dataIn.meanAccFit]);
+            tmpData = dataIn.meanAccFit;
             colFil   = [1 1 1; 1 1 1; 1 1 1; 1 1 1];
             x2plot = fitX;
         end

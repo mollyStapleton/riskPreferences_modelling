@@ -10,19 +10,6 @@ function [best_fit_parm, LL, BIC] = mdlFit_UCB_spread_riskPref(dataIn_all, param
 %%% 4) reward obtained
 %--------------------------------------------------------------------------
 
-% if model fitting to be split by reward distribution, identify
-% distribution specific trials
-if distSplit 
-    if strcmpi(dist, 'Gaussian')
-        distType = 1; 
-    else 
-        distType = 2;
-    end
-
-    distIdx = find(dataIn_all.distType == distType);
-    dataIn_all  = dataIn_all(distIdx, :);
-end 
-
     % objective function uses real data to fit using parameters alpha and beta
     % returned in X0
     % generation of an anonymous function

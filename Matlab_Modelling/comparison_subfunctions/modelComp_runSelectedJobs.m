@@ -1,0 +1,194 @@
+%------------------------------------------------------------------------
+%------------------------------------------------------------------------
+% ANALYSIS JOBS FOR MODEL COMPARISON 
+%------------------------------------------------------------------------
+%------------------------------------------------------------------------
+
+if separate_modelComp == 1
+
+    BIC_plot = cell(1, 2);
+
+    for idist = 1: length(dists)
+
+        BIC_plot{idist} = table();
+
+        if strcmp(dists(idist), 'Gaussian')
+            col2plot = {[0.83 0.71 0.98], [0.62 0.35 0.99]};
+            C = [colormap(cbrewer2('BuPu', 40))];
+
+        else
+            col2plot = {[0.58 0.99 0.56], [0.19 0.62 0.14]};
+            C =  [colormap(cbrewer2('YlGn', 40))];
+
+        end
+
+        for imodel = 1: length(models)
+
+            model_path = cd([base_path fit_path models{imodel}]);
+            modelFilename = [models{imodel} '_subjectLvl_paramFits_' dists{idist} '.mat'];
+            load(modelFilename);
+
+            BIC_plot{idist}(:, imodel) = array2table(data2save.BIC);
+
+            BIC_barData(imodel, 1) = nanmean(table2array(BIC_plot{idist}(:, imodel)));
+            BIC_barData(imodel, 2) = nanstd(table2array(BIC_plot{idist}(:, imodel)))./sqrt(size(BIC_plot{idist}(:, imodel), 1));
+
+        end
+
+        figure(1);
+        if strcmp(dists(idist), 'Gaussian')
+            subplot(1, 2, 1);
+            axis square
+        else
+            subplot(1, 2, 2);
+            axis square
+        end
+
+        hold on
+        barwitherr(BIC_barData(:, 2), BIC_barData(:, 1),'FaceColor',...
+            col2plot{1}, 'EdgeColor', col2plot{1}, 'linew', 2);
+        hold on
+        for imodel = 1: length(models)
+
+            plot(imodel, table2array(BIC_plot{idist}(:, imodel)), '.', 'MarkerSize', 15, 'color', col2plot{2});
+
+        end
+        ylabel('\bfAverage BIC');
+        set(gca, 'XTick', [1:5]);
+        set(gca, 'XTickLabel', {'\bfRW', '\bfRATES', '\bfUCB_1', '\bfUCB_2', '\bfPEIRS'});
+        set(gca, 'XTickLabelRotation', 45);
+        title(dists(idist), 'fontsize', 16);
+        set(gca, 'FontName', 'Arial');
+
+        % plot BIC change from RATES model
+        figure(2);
+        model_comp_idx = [1 3 4 5];
+        for icomp = 1: length(model_comp_idx)
+
+            BIC_comp{idist}(:, icomp) = table2array(BIC_plot{idist}(:, model_comp_idx(icomp)))...
+                - table2array(BIC_plot{idist}(:, 2));
+
+            if strcmp(dists(idist), 'Gaussian')
+                subplot(1, 2, 1);
+                axis square
+            else
+                subplot(1, 2, 2);
+                axis square
+            end
+
+            hold on
+            plot(BIC_comp{idist}(:, icomp), icomp, 'o', 'MarkerFaceColor', col2plot{1},...
+                'MarkerEdgeColor', [0 0 0], 'MarkerSize', 7);
+        end
+        ylim([0 5]);
+        hold on
+        plot([0 0], [0 5], 'k--', 'linew', 1.5);
+        set(gca, 'YTick', [1:4]);
+        set(gca, 'YTickLabel', {'\bfRW', '\bfUCB_1', '\bfUCB_2', '\bfPEIRS'});
+        xlabel('\bf \Delta BIC');
+        title(dists(idist), 'fontsize', 16);
+        set(gca, 'FontName', 'Arial');
+
+    end
+
+end
+
+
+if joint_modelComp == 1 
+
+    figure(1);
+    BIC_plot = cell(1, 5);
+    table2save = [];
+
+    for imodel = 1: length(models)
+
+        BIC_plot{imodel} = [];
+        subplot(3, 2, imodel);
+        modelTitle = {'RW', 'RATES', 'UCB_1', 'UCB_2', 'PEIRS'};
+        distIdx = [];
+
+        for idist = 1: length(dists)+1
+
+            xSub = [0 0.7 1.4];
+
+            if idist == 1    %SEPARATE PARAMETER - GAUSSIAN
+                col2plot = {[0.83 0.71 0.98], [0.62 0.35 0.99]};
+                C = [colormap(cbrewer2('BuPu', 40))];
+
+            elseif idist == 2 %SEPARATE PARAMETER - BIMODAL
+                col2plot = {[0.58 0.99 0.56], [0.19 0.62 0.14]};
+                C =  [colormap(cbrewer2('YlGn', 40))];
+
+            elseif idist == 3 %JOINT PARAMETER MODEL APPROACH
+                col2plot = {[0.5 0.5 0.5], [0.7 0.7 0.7]};
+                C =  [colormap(cbrewer2('Greys', 40))];
+
+            end
+
+            model_path = cd([base_path fit_path models{imodel}]);
+            if idist == 1 | idist == 2
+                modelFilename = [models{imodel} '_subjectLvl_paramFits_' dists{idist} '.mat'];
+            else
+                modelFilename = [models{imodel} '_subjectLvl_joint_paramFit.mat'];
+            end
+
+            load(modelFilename);
+            
+            if  idist == 3 
+                if imodel == 1 
+                    BIC_plot{imodel}(:, idist) = cell2mat(data2save.BIC);
+                else
+                    BIC_plot{imodel}(:, idist) = data2save.BIC;
+                end
+            else
+                BIC_plot{imodel}(:, idist) = data2save.BIC;
+            end
+
+
+            BIC_barData{imodel}(idist, 1) = nanmean(BIC_plot{imodel}(:, idist));
+            BIC_barData{imodel}(idist, 2) = nanstd(BIC_plot{imodel}(:, idist))./sqrt(length(BIC_plot{imodel}(:, idist)));
+
+            figure(1);
+
+            hold on
+            [hb, hberr] = barwitherr(BIC_barData{imodel}(idist, 2), BIC_barData{imodel}(idist, 1),'FaceColor',...
+                col2plot{1}, 'EdgeColor', col2plot{1}, 'linew', 2);
+            hold on
+            hb.XData = idist - xSub(idist);
+            hberr.XData = idist - xSub(idist);
+            hb.BarWidth = 0.3;
+
+            plot([idist - xSub(idist)], BIC_plot{imodel}(:, idist), '.', 'MarkerSize', 15, 'color', col2plot{2});
+
+
+            ylabel('\bfAverage BIC');
+%             set(gca, 'XTick', [1:5]);
+%             set(gca, 'XTickLabel', {'\bfRW', '\bfRATES', '\bfUCB_1', '\bfUCB_2', '\bfPEIRS'});
+            set(gca, 'XTickLabelRotation', 45);
+            set(gca, 'FontName', 'Arial');
+
+            tmpDist(1: length(BIC_plot{imodel}(:, idist))) = idist;
+            distIdx = [distIdx tmpDist];
+
+        end
+
+        set(gca, 'XTick', []);
+        set(gca, 'XLim', [0.5 2]);
+%         axis square
+        title(modelTitle{imodel}, 'FontSize', 14, 'FontWeight', 'Bold');
+        modelIdx = [];
+        modelIdx(1: length(distIdx)) = imodel;
+        subIdx   = [subs subs subs];
+        tmpTable = [modelIdx' distIdx' subIdx' BIC_plot{imodel}(:)];
+
+        table2save = [table2save; tmpTable];
+    end
+
+    table2save = array2table(table2save, 'VariableNames', {'modelIdx', 'distFitIdx', 'subIdx', 'BIC'});
+    cd('C:\Users\jf22662\OneDrive - University of Bristol\Documents\GitHub\modelling_figures\model_comparisons');
+    saveTablename = ['separate_joint_BIC_comp.csv'];
+    writetable(table2save, saveTablename);
+
+end
+
+

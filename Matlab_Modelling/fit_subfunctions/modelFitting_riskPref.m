@@ -17,7 +17,7 @@ if strcmpi(model, 'UCB_spread')
 end
 
 if strcmpi(model, 'PEIRS')
-        [best_fit_parm, LL, BIC] = mdlFit_PEIRS_riskPref(dataIn, params, dist, dists2run, nIters);
+        [best_fit_parm, LL, BIC] = mdlFit_PEIRS_riskPref(dataIn, params, dist, distSplit, nIters);
 end
 
 
