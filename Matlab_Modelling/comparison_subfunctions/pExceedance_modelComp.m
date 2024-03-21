@@ -66,6 +66,10 @@ for imodel = 1: length(models)
 end
 opt.DisplayWin = 0;
 [~,out_superBIC] = VBA_groupBMC(superBIC',opt);
+figure(1);
+subplot(2, 1, 1);
+hold on 
+bar(out_superBIC.pxp);
 %------------------------------------------------------
 % JOINT MODEL FITS 
 % can use values just as they are from raw fit output
@@ -79,3 +83,6 @@ end
 
 opt.DisplayWin = 0;
 [~,out_joint] = VBA_groupBMC(L',opt);
+subplot(2, 1, 2);
+hold on 
+bar(out_joint.pxp);

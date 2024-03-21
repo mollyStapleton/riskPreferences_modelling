@@ -35,9 +35,9 @@ dists   = {'Gaussian', 'Bimodal'};
 %-------------------------------------------------------------------
 %-------------------------------------------------------------
 
-separate_modelComp = 0;
-joint_modelComp    = 1;
-g
+separate_modelComp = 1;
+joint_modelComp    = 0;
+
 %-------------------------------------------------------------
 
 modelComp_runSelectedJobs;

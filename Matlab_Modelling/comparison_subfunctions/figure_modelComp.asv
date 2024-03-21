@@ -1,0 +1,43 @@
+function figure_modelComp(BIC, dist)
+
+    % Based off code taken from:
+    % https://github.com/BharathTalluri/postchoicebias/blob/b6489d95d06eaf8ad0fd12669cb937870d29eb05/Code/pdb_model_comparison.m#L5
+    % Talluri, B. C., Urai, A. E., Tsetsos, K., Usher, M., & Donner, T. H. (2018). 
+    % Confirmation bias through selective overweighting of choice-consistent evidence. Current Biology, 28(19), 3128-3135.
+    
+
+    BIC.Properties.VariableNames = {'RW', 'RATES', 'UCB_nCount', 'UCB_spread', 'PEIRS'};
+    cols = linspecer(30, 'sequential');
+    colormap(linspecer);
+    if idist == 1 
+        subplot(2, 1, 1);
+        titleTxt = {}
+    else 
+        subplot(2, 1, 2);
+    x = [-100 -10 -10 -100];
+    y = [0 0 4.25 4.25];
+    patch(x,y, [0.5 0.5 0.5], 'EdgeColor', 'none', 'FaceColor', [0.4, 0.4, 0.4], 'FaceAlpha', 0.2);
+    x = [10 50 50 10];
+    patch(x,y, [0.5 0.5 0.5], 'EdgeColor', 'none', 'FaceColor', [0.4, 0.4, 0.4], 'FaceAlpha', 0.2);
+    hold on
+    plot([0 0], [0 4.25], 'k', 'LineWidth', 0.25);
+    y = 4*ones(1,size(BIC, 1)) + 0.1*rand(1,size(BIC, 1));
+    x = BIC.RATES - BIC.RW;
+    scatter(x,y,75,cols, 'filled', 'MarkerEdgeColor', [1 1 1]);
+    y = 3*ones(1,size(BIC, 1)) + 0.1*rand(1,size(BIC, 1));
+    x = BIC.RATES - BIC.UCB_nCount;
+    scatter(x,y,75,cols, 'filled', 'MarkerEdgeColor', [1 1 1]);
+    y = 2*ones(1,size(BIC, 1)) + 0.1*rand(1,size(BIC, 1));
+    x = BIC.RATES - BIC.UCB_spread;
+    scatter(x,y,75,cols, 'filled', 'MarkerEdgeColor', [1 1 1]);
+    y = 1*ones(1,size(BIC, 1)) + 0.1*rand(1,size(BIC, 1));
+    x = BIC.RATES - BIC.PEIRS;
+    scatter(x,y,75,cols, 'filled', 'MarkerEdgeColor', [1 1 1]);
+    set(gca, 'YLim', [0.75 4.25], 'XLim', [-100 50], 'YTick', 1:4, 'YTickLabel',...
+        {'\bfRW',  '\bfUCBnCount', '\bfUCBspread', '\bfPEIRS'}, 'YTickLabelRotation', 45, 'XTick', -100:25:50, 'XTickLabel', -100:25:50)
+    xlabel('\bf \Delta BIC')
+    title('\fontsize{14} \bf \DeltaBIC relative to RATES model');
+    offsetAxes;
+    set(gca, 'FontName', 'Arial')
+
+end
